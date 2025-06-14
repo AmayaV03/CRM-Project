@@ -6,47 +6,230 @@ This guide establishes collaboration standards, workflows, and best practices fo
 
 ## Team Structure & Roles
 
-### Core Team Roles
+Team Member Assignments
 
-#### **Frontend Developer**
-- Develop React components and user interfaces
-- Implement responsive designs using Material-UI
-- Optimize frontend performance
-- Collaborate with designers on UI/UX implementation
+Member 1: Authentication & User Management
+Focus Area: User authentication, role-based access control, and user management features
+Assigned Components:
 
-#### **Senior Frontend Developer**
-- Work on complex frontend features and architecture
-- Implement state management patterns
-- Handle data flow and local storage
-- Ensure end-to-end feature completion
-- Mentor junior developers
+Authentication System
 
-#### **Lead Developer / Tech Lead**
-- Code review and architectural decisions
-- Mentor junior developers
-- Establish coding standards and best practices
-- Resolve technical conflicts and blockers
-- Coordinate with product management
+Login/logout functionality
+JWT token management
+Protected route implementation
+Session management
+User role validation
 
-#### **QA Engineer**
-- Manual quality assurance
-- Bug reporting and verification
-- User acceptance validation
-- Feature verification
 
-#### **UI/UX Designer**
-- Design system maintenance
-- User interface design
-- User experience optimization
-- Prototype creation
-- Design review and feedback
+User Management
 
-#### **Product Owner**
-- Define requirements and user stories
-- Prioritize backlog items
-- Accept completed features
-- Stakeholder communication
-- Business value assessment
+User profile management
+Role-based permissions (Salesperson, Sales Manager, Admin)
+User assignment functionality for leads
+Password management
+
+
+
+Key Files to Create:
+
+src/components/auth/LoginForm.jsx
+src/components/auth/ProtectedRoute.jsx
+src/store/slices/authSlice.js
+src/services/authService.js
+src/hooks/useAuth.js
+
+Deliverables:
+
+Complete authentication flow
+Role-based access control
+User management interface
+Session persistence with local storage
+
+Member 2: Lead Management Core
+Focus Area: Lead creation, editing, and core lead management functionality
+Assigned Components:
+
+Lead Creation & Editing
+
+Lead form with validation
+Lead details view
+Lead update functionality
+Duplicate detection
+Owner assignment
+
+
+Lead Data Management
+
+Lead service layer
+Local storage management
+Data validation
+Lead status transitions
+
+
+
+Key Files to Create:
+
+src/components/leads/LeadForm.jsx
+src/components/leads/LeadDetails.jsx
+src/components/leads/LeadsList.jsx
+src/store/slices/leadsSlice.js
+src/services/leadService.js
+src/hooks/useLeads.js
+
+Deliverables:
+
+Complete lead CRUD operations
+Form validation and error handling
+Lead assignment functionality
+Data persistence layer
+
+Member 3: Kanban Board & Drag-and-Drop
+Focus Area: Visual lead management through Kanban interface
+Assigned Components:
+
+Kanban Board
+
+Drag-and-drop functionality
+Status column management
+Lead card components
+Visual status indicators
+Real-time updates
+
+
+Lead Status Management
+
+Status transition validation
+Color-coded status display
+Lead status master data
+Status workflow enforcement
+
+
+
+Key Files to Create:
+
+src/pages/KanbanBoard/index.jsx
+src/components/kanban/KanbanColumn.jsx
+src/components/kanban/KanbanCard.jsx
+src/components/kanban/DragDropProvider.jsx
+src/services/kanbanService.js
+
+Deliverables:
+
+Fully functional Kanban board
+Smooth drag-and-drop experience
+Status transition validation
+Mobile-responsive design
+
+Member 4: Dashboard & Analytics
+Focus Area: Reporting, analytics, and dashboard components
+Assigned Components:
+
+Dashboard Metrics
+
+KPI calculations and display
+Lead conversion tracking
+Performance metrics
+Real-time data updates
+
+
+Charts & Visualizations
+
+Pie charts for lead distribution
+Bar charts for status analysis
+Metric cards for key numbers
+Export functionality
+
+
+
+Key Files to Create:
+
+src/pages/Dashboard/index.jsx
+src/components/dashboard/DashboardMetrics.jsx
+src/components/charts/PieChart.jsx
+src/components/charts/BarChart.jsx
+src/components/charts/MetricCard.jsx
+src/services/reportService.js
+
+Deliverables:
+
+Interactive dashboard
+Comprehensive analytics
+Data visualization components
+Export and filtering capabilities
+
+Member 5: UI/UX & Layout Components
+Focus Area: Application layout, common components, and user interface consistency
+Assigned Components:
+
+Layout Components
+
+Application header and navigation
+Sidebar navigation
+Page layouts and containers
+Responsive design implementation
+
+
+Common UI Components
+
+Loading spinners and indicators
+Error boundaries and handling
+Confirmation dialogs
+Notification system
+Form components
+
+
+
+Key Files to Create:
+
+src/components/layout/AppLayout.jsx
+src/components/layout/Header.jsx
+src/components/layout/Sidebar.jsx
+src/components/common/LoadingSpinner.jsx
+src/components/common/ErrorBoundary.jsx
+src/components/common/ConfirmDialog.jsx
+
+Deliverables:
+
+Consistent application layout
+Reusable UI components
+Responsive design system
+Error handling components
+
+Member 6: Internationalization & Configuration
+Focus Area: Multi-language support, configuration, and master data management
+Assigned Components:
+
+Internationalization (i18n)
+
+English/Arabic language support
+Translation management
+RTL (Right-to-Left) layout support
+Language switching functionality
+
+
+Configuration & Master Data
+
+Lead source management
+Lead status configuration
+Application settings
+Local storage utilities
+
+Key Files to Create:
+
+src/locales/en.js
+src/locales/ar.js
+src/locales/index.js
+src/components/settings/LanguageSelector.jsx
+src/components/admin/MasterDataManager.jsx
+src/services/storageService.js
+src/utils/i18nUtils.js
+
+Deliverables:
+
+Complete multi-language support
+Master data management interface
+Configuration utilities
+Localization infrastructure
 
 ## Development Workflow
 
@@ -66,7 +249,7 @@ This guide establishes collaboration standards, workflows, and best practices fo
 
 #### Sprint Planning Meeting
 - **When**: First day of sprint
-- **Duration**: 4 hours (2-week sprint)
+- **Duration**: 4 hours
 - **Participants**: Entire development team
 
 **Agenda**:
@@ -90,10 +273,7 @@ Each team member answers:
 
 **Best Practices**:
 - Keep updates concise (2-3 minutes per person)
-- Focus on progress toward sprint goals
-- Identify blockers early
-- Schedule detailed discussions after standup
-- Update task status in real-time
+- Focus on progress toward sprin
 
 ### 3. Code Review Process
 
