@@ -6,6 +6,7 @@ export default {
     kanban: 'Kanban Board',
     reports: 'Reports',
     settings: 'Settings',
+    admin: 'Admin Panel',
     profile: 'Profile',
     logout: 'Logout',
   },

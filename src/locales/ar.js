@@ -6,6 +6,7 @@ export default {
     kanban: 'لوحة كانبان',
     reports: 'التقارير',
     settings: 'الإعدادات',
+    admin: 'لوحة الإدارة',
     profile: 'الملف الشخصي',
     logout: 'تسجيل خروج',
   },

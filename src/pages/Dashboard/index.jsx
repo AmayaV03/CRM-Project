@@ -1,74 +1,222 @@
 import React from 'react';
-import { Box, Typography, Paper, Grid } from '@mui/material';
+import { 
+  Box, 
+  Typography, 
+  Paper, 
+  Grid, 
+  Card, 
+  CardContent,
+  Chip,
+  Avatar,
+  useTheme
+} from '@mui/material';
+import {
+  TrendingUp,
+  People,
+  Schedule,
+  CheckCircle,
+  Cancel,
+  Business
+} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { selectAllLeads } from '../../store/slices/leadsSlice';
 
 const Dashboard = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const leads = useSelector(selectAllLeads);
 
+  const metricCards = [
+    {
+      title: t('dashboard.metrics.totalLeads'),
+      value: leads.length,
+      icon: <People />,
+      color: theme.palette.primary.main,
+      bgColor: `${theme.palette.primary.main}15`,
+    },
+    {
+      title: t('dashboard.metrics.newThisWeek'),
+      value: 0,
+      icon: <Schedule />,
+      color: theme.palette.secondary.main,
+      bgColor: `${theme.palette.secondary.main}15`,
+    },
+    {
+      title: t('dashboard.metrics.converted'),
+      value: 0,
+      icon: <CheckCircle />,
+      color: theme.palette.success.main,
+      bgColor: `${theme.palette.success.main}15`,
+    },
+    {
+      title: t('dashboard.metrics.lost'),
+      value: 0,
+      icon: <Cancel />,
+      color: theme.palette.error.main,
+      bgColor: `${theme.palette.error.main}15`,
+    },
+  ];
+
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        {t('dashboard.title')}
-      </Typography>
-      
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" color="primary">
-              {t('dashboard.metrics.totalLeads')}
-            </Typography>
-            <Typography variant="h3">
-              {leads.length}
-            </Typography>
-          </Paper>
-        </Grid>
-        
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" color="secondary">
-              {t('dashboard.metrics.newThisWeek')}
-            </Typography>
-            <Typography variant="h3">
-              0
-            </Typography>
-          </Paper>
-        </Grid>
-        
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" color="success.main">
-              {t('dashboard.metrics.converted')}
-            </Typography>
-            <Typography variant="h3">
-              0
-            </Typography>
-          </Paper>
-        </Grid>
-        
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" color="error.main">
-              {t('dashboard.metrics.lost')}
-            </Typography>
-            <Typography variant="h3">
-              0
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
-      
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Welcome to LeadFlow CRM
+    <Box sx={{ p: 3, bgcolor: 'background.default', minHeight: '100vh' }}>
+      {/* Header Section */}
+      <Box sx={{ mb: 4 }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom
+          sx={{
+            fontWeight: 700,
+            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          {t('dashboard.title')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Your comprehensive lead management system is ready to use. 
-          Start by adding some leads or explore the different features.
+          Monitor your sales performance and track your progress
         </Typography>
       </Box>
+      
+      {/* Metrics Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {metricCards.map((metric, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Card 
+              sx={{ 
+                borderRadius: 3,
+                border: `1px solid ${metric.color}20`,
+                boxShadow: `0 4px 20px ${metric.color}15`,
+                transition: 'all 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: `0 8px 30px ${metric.color}25`,
+                }
+              }}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                  <Avatar
+                    sx={{
+                      bgcolor: metric.bgColor,
+                      color: metric.color,
+                      width: 48,
+                      height: 48,
+                    }}
+                  >
+                    {metric.icon}
+                  </Avatar>
+                  <Chip
+                    label="Active"
+                    size="small"
+                    sx={{
+                      bgcolor: metric.bgColor,
+                      color: metric.color,
+                      fontWeight: 500,
+                    }}
+                  />
+                </Box>
+                <Typography 
+                  variant="h3" 
+                  sx={{ 
+                    fontWeight: 700, 
+                    color: metric.color,
+                    mb: 1
+                  }}
+                >
+                  {metric.value}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                  {metric.title}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      
+      {/* Welcome Section */}
+      <Paper 
+        sx={{ 
+          p: 4, 
+          borderRadius: 3,
+          background: `linear-gradient(135deg, ${theme.palette.primary.main}10 0%, ${theme.palette.secondary.main}10 100%)`,
+          border: `1px solid ${theme.palette.primary.main}20`,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+          <Avatar
+            sx={{
+              bgcolor: theme.palette.primary.main,
+              mr: 2,
+              width: 56,
+              height: 56,
+            }}
+          >
+            <Business sx={{ fontSize: '2rem' }} />
+          </Avatar>
+          <Box>
+            <Typography 
+              variant="h5" 
+              gutterBottom
+              sx={{
+                fontWeight: 600,
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Welcome to LeadOrbit
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+              Your intelligent lead management system is ready to transform your sales journey. 
+              Start by adding leads, exploring features, and accelerating your business growth.
+            </Typography>
+          </Box>
+        </Box>
+        
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Chip
+            label="🚀 Get Started"
+            sx={{
+              bgcolor: theme.palette.primary.main,
+              color: 'white',
+              fontWeight: 500,
+              '&:hover': {
+                bgcolor: theme.palette.primary.dark,
+              }
+            }}
+          />
+          <Chip
+            label="📊 View Analytics"
+            variant="outlined"
+            sx={{
+              borderColor: theme.palette.primary.main,
+              color: theme.palette.primary.main,
+              fontWeight: 500,
+              '&:hover': {
+                bgcolor: `${theme.palette.primary.main}10`,
+              }
+            }}
+          />
+          <Chip
+            label="⚙️ Settings"
+            variant="outlined"
+            sx={{
+              borderColor: theme.palette.secondary.main,
+              color: theme.palette.secondary.main,
+              fontWeight: 500,
+              '&:hover': {
+                bgcolor: `${theme.palette.secondary.main}10`,
+              }
+            }}
+          />
+        </Box>
+      </Paper>
     </Box>
   );
 };
