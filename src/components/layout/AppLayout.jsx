@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Drawer,
@@ -13,6 +13,11 @@ import {
   ListItemIcon,
   ListItemText,
   Button,
+  Avatar,
+  Menu,
+  MenuItem,
+  Chip,
+  Dialog,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -22,43 +27,105 @@ import {
   Assessment as ReportsIcon,
   Settings as SettingsIcon,
   Logout as LogoutIcon,
+  Person as PersonIcon,
+  AccountCircle as AccountCircleIcon,
+  SupervisorAccount as SupervisorAccountIcon,
+  AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { logout } from '../../store/slices/authSlice';
 import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice';
+import useAuth from '../../hooks/useAuth';
+import UserProfile from '../auth/UserProfile';
 
 const drawerWidth = 240;
 
-const navigation = [
-  { name: 'nav.dashboard', path: '/dashboard', icon: DashboardIcon },
-  { name: 'nav.leads', path: '/leads', icon: PeopleIcon },
-  { name: 'nav.kanban', path: '/kanban', icon: KanbanIcon },
-  { name: 'nav.reports', path: '/reports', icon: ReportsIcon },
-  { name: 'nav.settings', path: '/settings', icon: SettingsIcon },
-];
+const getNavigation = (isAdmin) => {
+  const baseNavigation = [
+    { name: 'nav.dashboard', path: '/dashboard', icon: DashboardIcon },
+    { name: 'nav.leads', path: '/leads', icon: PeopleIcon },
+    { name: 'nav.kanban', path: '/kanban', icon: KanbanIcon },
+    { name: 'nav.reports', path: '/reports', icon: ReportsIcon },
+    { name: 'nav.settings', path: '/settings', icon: SettingsIcon },
+  ];
+
+  // Add admin route for admin users
+  if (isAdmin) {
+    baseNavigation.push({
+      name: 'nav.admin',
+      path: '/admin',
+      icon: AdminIcon,
+    });
+  }
+
+  return baseNavigation;
+};
 
 const AppLayout = ({ children }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const sidebarOpen = useSelector(selectSidebarOpen);
+  const { user, logout, isAdmin, canManageUsers } = useAuth();
+  
+  // Local state
+  const [userMenuAnchor, setUserMenuAnchor] = useState(null);
+  const [showUserProfile, setShowUserProfile] = useState(false);
 
   const handleDrawerToggle = () => {
-    dispatch(toggleSidebar());
+    // dispatch(toggleSidebar()); // This will be implemented by Member 5
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleUserMenuClick = (event) => {
+    setUserMenuAnchor(event.currentTarget);
   };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchor(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const handleProfileClick = () => {
+    setShowUserProfile(true);
+    handleUserMenuClose();
+  };
+
+
+
+  // Get role display info
+  const getRoleInfo = () => {
+    if (!user?.roles) return { label: 'User', color: 'default' };
+    
+    if (user.roles.includes('admin')) {
+      return { label: 'Admin', color: 'error' };
+    }
+    if (user.roles.includes('sales_manager')) {
+      return { label: 'Manager', color: 'warning' };
+    }
+    if (user.roles.includes('salesperson')) {
+      return { label: 'Sales Rep', color: 'info' };
+    }
+    
+    return { label: 'User', color: 'default' };
+  };
+
+  const roleInfo = getRoleInfo();
+  const navigation = getNavigation(isAdmin);
 
   const drawer = (
     <div>
       <Toolbar>
         <Typography variant="h6" noWrap component="div">
-          LeadFlow CRM
+          LeadOrbit
         </Typography>
       </Toolbar>
       <Divider />
@@ -97,7 +164,7 @@ const AppLayout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <AppBar
         position="fixed"
         sx={{
@@ -116,11 +183,96 @@ const AppLayout = ({ children }) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            LeadFlow CRM
+            LeadOrbit
           </Typography>
-          <Button color="inherit" onClick={handleLogout}>
-            {t('nav.logout')}
-          </Button>
+          
+          {/* User Info and Menu */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
+              <Chip
+                label={roleInfo.label}
+                color={roleInfo.color}
+                size="small"
+                variant="outlined"
+                sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.5)' }}
+              />
+              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                {user?.name}
+              </Typography>
+            </Box>
+            
+            <IconButton
+              color="inherit"
+              onClick={handleUserMenuClick}
+              sx={{ p: 0 }}
+            >
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 255, 255, 0.2)' }}>
+                {user?.name?.charAt(0)?.toUpperCase() || <PersonIcon />}
+              </Avatar>
+            </IconButton>
+          </Box>
+
+          {/* User Menu */}
+          <Menu
+            anchorEl={userMenuAnchor}
+            open={Boolean(userMenuAnchor)}
+            onClose={handleUserMenuClose}
+            onClick={handleUserMenuClose}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            PaperProps={{
+              elevation: 8,
+              sx: {
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                mt: 1.5,
+                minWidth: 200,
+                '& .MuiAvatar-root': {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                '&:before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
+                  zIndex: 0,
+                },
+              },
+            }}
+          >
+            <MenuItem onClick={handleProfileClick}>
+              <Avatar sx={{ bgcolor: 'primary.main' }}>
+                <AccountCircleIcon />
+              </Avatar>
+              Profile
+            </MenuItem>
+            
+            {canManageUsers && (
+              <MenuItem onClick={() => navigate('/admin')}>
+                <Avatar sx={{ bgcolor: 'secondary.main' }}>
+                  <SupervisorAccountIcon />
+                </Avatar>
+                Admin Panel
+              </MenuItem>
+            )}
+            
+            <Divider />
+            
+            <MenuItem onClick={handleLogout}>
+              <Avatar sx={{ bgcolor: 'error.main' }}>
+                <LogoutIcon />
+              </Avatar>
+              {t('nav.logout')}
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       
@@ -160,11 +312,25 @@ const AppLayout = ({ children }) => {
           flexGrow: 1,
           p: 0,
           width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
+          height: '100vh',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <Toolbar />
-        {children}
+        <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+          {children}
+        </Box>
       </Box>
+
+      {/* User Profile Dialog */}
+      <UserProfile
+        open={showUserProfile}
+        onClose={() => setShowUserProfile(false)}
+      />
+
+
     </Box>
   );
 };

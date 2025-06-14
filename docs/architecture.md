@@ -37,6 +37,7 @@ This document outlines the system architecture for LeadFlow CRM, a React-based l
 │  │              │  │              │  │              │     │
 │  │ - Dashboard  │  │ - LeadForm   │  │ - useLeads   │     │
 │  │ - KanbanBoard│  │ - LeadCard   │  │ - useAuth    │     │
+│  │ - Admin      │  │ - LoginForm  │  │ - useUsers   │     │
 │  │ - Reports    │  │ - Charts     │  │ - useLocal   │     │
 │  └──────────────┘  └──────────────┘  └──────────────┘     │
 │                                                             │
@@ -47,8 +48,9 @@ This document outlines the system architecture for LeadFlow CRM, a React-based l
 │  │  │Redux Store  │  │Local Cache  │  │Local State  │  │   │
 │  │  │             │  │             │  │             │  │   │
 │  │  │- Auth       │  │- Lead Data  │  │- Form Data  │  │   │
-│  │  │- UI State   │  │- User Prefs │  │- UI State   │  │   │
-│  │  │- Settings   │  │- App Cache  │  │- Temp Data  │  │   │
+│  │  │- UI State   │  │- User Data  │  │- UI State   │  │   │
+│  │  │- Users      │  │- Passwords  │  │- Temp Data  │  │   │
+│  │  │- Settings   │  │- App Cache  │  │- Dialogs    │  │   │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  │   │
 │  └─────────────────────────────────────────────────────┘   │
 │                                                             │
@@ -56,11 +58,24 @@ This document outlines the system architecture for LeadFlow CRM, a React-based l
 │  │                Services Layer                       │   │
 │  │                                                     │   │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │   │
-│  │  │Storage Svc  │  │Auth Service │  │Utils        │  │   │
+│  │  │Storage Svc  │  │Auth Service │  │User Service │  │   │
 │  │  │             │  │             │  │             │  │   │
-│  │  │- LocalStore │  │- Token Mgmt │  │- Validators │  │   │
-│  │  │- Session    │  │- Login/out  │  │- Formatters │  │   │
-│  │  │- Cache Mgmt │  │- Refresh    │  │- Constants  │  │   │
+│  │  │- LocalStore │  │- Enhanced   │  │- User CRUD  │  │   │
+│  │  │- Session    │  │  Auth Logic │  │- Password   │  │   │
+│  │  │- Cache Mgmt │  │- Dual Check │  │  Management │  │   │
+│  │  │- Migration  │  │- Role Perms │  │- Role Mgmt  │  │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              localStorage Layer                     │   │
+│  │                                                     │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │   │
+│  │  │Auth Tokens  │  │User Data    │  │App Settings │  │   │
+│  │  │             │  │             │  │             │  │   │
+│  │  │- JWT Token  │  │- crm_users  │  │- Security   │  │   │
+│  │  │- Refresh    │  │- crm_user_  │  │- UI Prefs   │  │   │
+│  │  │- User Data  │  │  passwords  │  │- Language   │  │   │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  │   │
 │  └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
@@ -89,6 +104,14 @@ src/pages/
 │   ├── KanbanColumn.jsx
 │   ├── KanbanCard.jsx
 │   └── DragDropProvider.jsx
+├── Admin/
+│   ├── index.jsx
+│   ├── UserManagementPage.jsx
+│   ├── SystemSettings.jsx
+│   └── SecuritySettings.jsx
+├── Auth/
+│   ├── LoginPage.jsx
+│   └── index.jsx
 └── Reports/
     ├── index.jsx
     ├── ReportsChart.jsx
@@ -106,6 +129,15 @@ src/components/
 │   ├── LoadingSpinner.jsx
 │   ├── ErrorBoundary.jsx
 │   └── ConfirmDialog.jsx
+├── auth/
+│   ├── LoginForm.jsx
+│   ├── UserProfile.jsx
+│   └── ProtectedRoute.jsx
+    └──  UserManagement.jsx
+
+
+
+
 ├── forms/
 │   ├── LeadForm.jsx
 │   ├── StatusForm.jsx
@@ -114,6 +146,7 @@ src/components/
 │   ├── AppLayout.jsx
 │   ├── PageHeader.jsx
 │   └── ContentWrapper.jsx
+│   └── AppRouter.jsx
 └── charts/
     ├── PieChart.jsx
     ├── BarChart.jsx
@@ -131,7 +164,9 @@ src/components/
     token: null,
     isAuthenticated: false,
     loading: false,
-    error: null
+    error: null,
+    roles: [],
+    permissions: []
   },
   ui: {
     theme: 'light',
@@ -144,6 +179,12 @@ src/components/
     loading: false,
     error: null,
     filters: {}
+  },
+  users: {
+    items: [],
+    loading: false,
+    error: null,
+    currentUser: null
   },
   cache: {
     // Local data cache
@@ -164,11 +205,12 @@ src/store/slices/
 
 #### Data Management
 ```
-src/store/services/
+src/services/
 ├── storageService.js
-├── authService.js
+├── authService.js        // Enhanced with localStorage user authentication
 ├── leadsService.js
 ├── reportsService.js
+├── userService.js        // User management operations
 └── masterDataService.js
 ```
 
@@ -215,6 +257,56 @@ src/locales/
 └── index.js           // i18n configuration
 ```
 
+## User Management Architecture
+
+### 1. Admin User Management Flow
+```
+Admin Dashboard → UserManagementPage → Create/Edit User → 
+localStorage (crm_users) → Password Management → localStorage (crm_user_passwords) → 
+User Notification → Login Ready
+```
+
+### 2. Password Management System
+```javascript
+// Password Management Components
+src/pages/Admin/UserManagementPage.jsx
+├── handlePasswordManagement()     // Opens password dialog
+├── setUserPassword()             // Sets admin password
+├── generateSecurePassword()      // Generates secure passwords
+└── Password Dialog UI            // User interface for password management
+
+// Authentication Integration
+src/services/authService.js
+├── getUsersFromStorage()         // Retrieves localStorage users
+├── getAdminPasswordsFromStorage() // Retrieves admin passwords
+├── authenticate()                // Enhanced authentication logic
+└── getRolePermissions()          // Maps roles to permissions
+```
+
+### 3. User Authentication Flow
+```
+Login Attempt → authService.authenticate() → 
+Check Hardcoded Users → Check localStorage Users → 
+Validate Admin Password (Priority) → Validate User Password (Fallback) → 
+Generate JWT Token → Store Auth Data → Grant Access
+```
+
+### 4. Role-Based Access Control
+```javascript
+// Role Hierarchy
+Admin → Full Access (manage_users, manage_leads, view_reports, reassign_leads)
+Sales Manager → Limited Admin (manage_leads, view_reports, reassign_leads)
+Salesperson → Basic Access (manage_leads)
+
+// Permission Mapping
+const getRolePermissions = (roles) => {
+  if (roles.includes('admin')) return ['manage_leads', 'manage_users', 'view_reports', 'reassign_leads'];
+  if (roles.includes('sales_manager')) return ['manage_leads', 'view_reports', 'reassign_leads'];
+  if (roles.includes('salesperson')) return ['manage_leads'];
+  return [];
+};
+```
+
 ## Data Flow Patterns
 
 ### 1. User Interaction Flow
@@ -230,6 +322,18 @@ Component → useLeads Hook → Local Storage → Cache Update → Component Upd
 ### 3. Form Submission Flow
 ```
 LeadForm → onSubmit → createLead Service → Local Storage → Cache Invalidation → UI Update
+```
+
+### 4. User Management Flow
+```
+Admin Action → UserManagementPage → User Service → localStorage Update → 
+Event Dispatch → Component Re-render → Notification Display
+```
+
+### 5. Authentication Flow
+```
+Login Form → useAuth Hook → authService → localStorage Check → 
+Token Generation → Redux Update → Route Protection → Dashboard Access
 ```
 
 ## Component Architecture
@@ -324,16 +428,38 @@ const useErrorHandler = () => {
 
 ### 1. Authentication Flow
 ```
-User Login → Local Auth → JWT Token → Store in Redux → Set Storage → Protected Routes Access
+User Login → Enhanced Auth Service → Check Hardcoded Users → Check localStorage Users → 
+Admin Password Validation → JWT Token → Store in Redux → Set Storage → Protected Routes Access
 ```
 
-### 2. Data Protection
+#### Enhanced Authentication Process
+1. **Dual User Source**: Checks both hardcoded users and localStorage users
+2. **Admin Password Management**: Supports admin-created passwords stored separately
+3. **Backward Compatibility**: Maintains support for existing authentication methods
+4. **Role-Based Access**: Assigns permissions based on user roles
+
+### 2. User Management System
+```
+Admin Creates User → Store in localStorage (crm_users) → 
+Admin Sets Password → Store in localStorage (crm_user_passwords) → 
+User Login → Authentication Service Validates → Access Granted
+```
+
+#### Password Management Features
+- **Admin Password Creation**: Admins can set passwords for users
+- **Dual Storage**: Passwords stored in both user records and admin reference
+- **Priority System**: Admin-set passwords take precedence over user passwords
+- **Secure Validation**: Proper password validation during authentication
+
+### 3. Data Protection
 - Input validation and sanitization
 - XSS protection with proper escaping
 - Local storage encryption for sensitive data
 - Token-based authentication
+- Role-based access control (RBAC)
+- Admin password management with audit trail
 
-### 3. Route Protection
+### 4. Route Protection
 ```javascript
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -341,6 +467,41 @@ const ProtectedRoute = ({ children }) => {
   
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
+
+// Role-based Route Protection
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, isAdmin } = useAuth();
+  
+  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (!isAdmin) return <Navigate to="/unauthorized" />;
+  
+  return children;
+};
+```
+
+### 5. localStorage Security Model
+```javascript
+// User Data Structure
+localStorage: {
+  'crm_users': [
+    {
+      id: 'user-id',
+      name: 'User Name',
+      email: 'user@example.com',
+      roles: ['salesperson'],
+      status: 'active',
+      password: 'user-password' // Fallback password
+    }
+  ],
+  'crm_user_passwords': {
+    'user-id': {
+      email: 'user@example.com',
+      password: 'admin-set-password', // Takes precedence
+      setBy: 'Admin User',
+      setAt: '2024-01-20T15:30:00Z'
+    }
+  }
+}
 ```
 
 ## Performance Optimization
@@ -391,6 +552,55 @@ const LeadsList = () => {
 };
 ```
 
+## Data Storage Architecture
+
+### 1. localStorage Structure
+```javascript
+// Application Data Storage
+localStorage: {
+  // Authentication Tokens
+  'leadflow_auth_token': 'jwt-token-string',
+  'leadflow_user_data': '{"id":"user-1","name":"User Name",...}',
+  'leadflow_refresh_token': 'refresh-token-string',
+  
+  // User Management Data
+  'crm_users': '[{"id":"user-1","name":"User Name","email":"user@example.com",...}]',
+  'crm_user_passwords': '{"user-1":{"password":"admin-set-password","setBy":"Admin",...}}',
+  
+  // Application Settings
+  'crm_security_settings': '{"passwordMinLength":8,"requireUppercase":true,...}',
+  
+  // User Preferences
+  'leadflow_saved_email': 'user@example.com',
+  'leadflow_remember_me': 'true'
+}
+```
+
+### 2. Data Synchronization
+```
+Component State ↔ localStorage ↔ Redux Store ↔ UI Components
+```
+
+### 3. Cache Management
+- Automatic cache invalidation on data updates
+- Event-driven cache updates using CustomEvent
+- Optimistic UI updates with rollback capability
+
+### 4. Data Migration Strategy
+```javascript
+// Version-based data migration
+const migrateUserData = (version) => {
+  switch(version) {
+    case '1.0':
+      // Migrate from old user structure
+      break;
+    case '2.0':
+      // Add password management fields
+      break;
+  }
+};
+```
+
 ## Deployment Architecture
 
 ### 1. Build Process
@@ -403,3 +613,9 @@ Source Code → Vite Build → Static Assets → CDN Distribution
 - Staging environment
 - Production environment
 - Feature branch deployments
+
+### 3. Security Considerations
+- Environment-specific authentication endpoints
+- Secure token storage and transmission
+- Role-based deployment access
+- Data encryption in production environments

@@ -9,6 +9,7 @@ import Leads from '../../pages/Leads';
 import KanbanBoard from '../../pages/KanbanBoard';
 import Reports from '../../pages/Reports';
 import Settings from '../../pages/Settings';
+import AdminDashboard from '../../pages/Admin';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -58,6 +59,7 @@ const AppRoutes = () => {
                 <Route path="/kanban" element={<KanbanBoard />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </AppLayout>
