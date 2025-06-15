@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { selectIsAuthenticated } from '../../store/slices/authSlice';
+import { selectIsAuthenticated } from '../../store/slices/authSlice.jsx';
 import AppLayout from './AppLayout';
 import LoginPage from '../../pages/Auth/LoginPage';
 import Dashboard from '../../pages/Dashboard';
