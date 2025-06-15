@@ -138,9 +138,7 @@ const LoginForm = () => {
 
   const handleRoleSelect = (event, newValue) => {
     setSelectedRole(newValue);
-    const account = demoAccounts[newValue];
-    setValue('email', account.email);
-    setValue('password', account.password);
+    // Note: Auto-fill functionality removed - users must manually enter credentials
   };
 
   const togglePasswordVisibility = () => {
@@ -148,13 +146,7 @@ const LoginForm = () => {
   };
 
   const handleForgotPassword = () => {
-    const currentRole = demoAccounts[selectedRole].role;
-    
-    if (currentRole === 'Admin') {
-      alert('Password reset link has been sent to your registered email address');
-    } else {
-      alert('Forgot password functionality will be implemented soon. Please contact your administrator.');
-    }
+    alert('Forgot password functionality will be implemented soon. Please contact your administrator for password reset assistance.');
   };
 
   // Decorative shapes for left side
@@ -385,7 +377,7 @@ const LoginForm = () => {
               </Box>
             </Box>
 
-            {/* Role Selection Tabs */}
+            {/* Role Information */}
             <Box sx={{ mb: 4, width: '100%' }}>
               <Tabs
                 value={selectedRole}
