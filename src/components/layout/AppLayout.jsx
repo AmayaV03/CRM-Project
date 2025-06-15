@@ -41,14 +41,18 @@ import UserProfile from '../auth/UserProfile';
 
 const drawerWidth = 240;
 
-const getNavigation = (isAdmin) => {
+const getNavigation = (isAdmin, canViewReports) => {
   const baseNavigation = [
     { name: 'nav.dashboard', path: '/dashboard', icon: DashboardIcon },
     { name: 'nav.leads', path: '/leads', icon: PeopleIcon },
     { name: 'nav.kanban', path: '/kanban', icon: KanbanIcon },
-    { name: 'nav.reports', path: '/reports', icon: ReportsIcon },
     { name: 'nav.settings', path: '/settings', icon: SettingsIcon },
   ];
+
+  // Add reports for users who have permission to view reports (exclude salespeople)
+  if (canViewReports) {
+    baseNavigation.splice(3, 0, { name: 'nav.reports', path: '/reports', icon: ReportsIcon });
+  }
 
   // Add admin route for admin users
   if (isAdmin) {
@@ -67,7 +71,7 @@ const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const sidebarOpen = useSelector(selectSidebarOpen);
-  const { user, logout, isAdmin, canManageUsers } = useAuth();
+  const { user, logout, isAdmin, canManageUsers, canViewReports } = useAuth();
   
   // Local state
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
@@ -119,7 +123,7 @@ const AppLayout = ({ children }) => {
   };
 
   const roleInfo = getRoleInfo();
-  const navigation = getNavigation(isAdmin);
+  const navigation = getNavigation(isAdmin, canViewReports);
 
   const drawer = (
     <div>
