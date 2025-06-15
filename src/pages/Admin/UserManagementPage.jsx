@@ -55,6 +55,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import useAuth from '../../hooks/useAuth';
+import authService from '../../services/authService';
 
 const UserManagementPage = () => {
   const { t } = useTranslation();
@@ -218,6 +219,7 @@ const UserManagementPage = () => {
           phone: '+1234567890',
           department: 'Administration',
           roles: ['admin'],
+          permissions: authService.getRolePermissions(['admin']),
           status: 'active',
           createdAt: '2024-01-15T10:30:00Z',
           lastLogin: '2024-01-20T09:15:00Z',
@@ -232,6 +234,7 @@ const UserManagementPage = () => {
           phone: '+1234567891',
           department: 'Sales',
           roles: ['sales_manager'],
+          permissions: authService.getRolePermissions(['sales_manager']),
           status: 'active',
           createdAt: '2024-01-10T14:20:00Z',
           lastLogin: '2024-01-19T16:45:00Z',
@@ -246,6 +249,7 @@ const UserManagementPage = () => {
           phone: '+1234567892',
           department: 'Sales',
           roles: ['salesperson'],
+          permissions: authService.getRolePermissions(['salesperson']),
           status: 'active',
           createdAt: '2024-01-05T11:10:00Z',
           lastLogin: '2024-01-20T08:30:00Z',
@@ -260,6 +264,7 @@ const UserManagementPage = () => {
           phone: '+1234567893',
           department: 'Sales',
           roles: ['salesperson'],
+          permissions: authService.getRolePermissions(['salesperson']),
           status: 'inactive',
           createdAt: '2024-01-03T16:45:00Z',
           lastLogin: '2024-01-15T12:20:00Z',
@@ -448,7 +453,12 @@ const UserManagementPage = () => {
         // Update existing user
         updatedUsers = users.map(u => 
           u.id === selectedUser.id 
-            ? { ...u, ...data, updatedAt: new Date().toISOString() }
+            ? { 
+                ...u, 
+                ...data, 
+                permissions: authService.getRolePermissions(data.roles), // Update permissions based on new roles
+                updatedAt: new Date().toISOString() 
+              }
             : u
         );
         setUsers(updatedUsers);
@@ -459,6 +469,7 @@ const UserManagementPage = () => {
         const newUser = {
           id: `user-${Date.now()}`,
           ...data,
+          permissions: authService.getRolePermissions(data.roles), // Assign permissions based on roles
           createdAt: new Date().toISOString(),
           lastLogin: null,
           // Password management fields for new users
@@ -470,13 +481,6 @@ const UserManagementPage = () => {
         setUsers(updatedUsers);
         saveUsersToStorage(updatedUsers);
         setShowAddDialog(false);
-        
-        // Show notification with login instructions
-        setNotification({
-          open: true,
-          message: `User created successfully! Default password is "password123". User must change password on first login.`,
-          severity: 'success'
-        });
       }
       
       setLoading(false);
