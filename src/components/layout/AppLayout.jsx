@@ -35,20 +35,24 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice';
+import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.jsx';
 import useAuth from '../../hooks/useAuth';
 import UserProfile from '../auth/UserProfile';
 
 const drawerWidth = 240;
 
-const getNavigation = (isAdmin) => {
+const getNavigation = (isAdmin, canViewReports) => {
   const baseNavigation = [
     { name: 'nav.dashboard', path: '/dashboard', icon: DashboardIcon },
     { name: 'nav.leads', path: '/leads', icon: PeopleIcon },
     { name: 'nav.kanban', path: '/kanban', icon: KanbanIcon },
-    { name: 'nav.reports', path: '/reports', icon: ReportsIcon },
     { name: 'nav.settings', path: '/settings', icon: SettingsIcon },
   ];
+
+  // Add reports for users who have permission to view reports (exclude salespeople)
+  if (canViewReports) {
+    baseNavigation.splice(3, 0, { name: 'nav.reports', path: '/reports', icon: ReportsIcon });
+  }
 
   // Add admin route for admin users
   if (isAdmin) {
@@ -67,7 +71,7 @@ const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const sidebarOpen = useSelector(selectSidebarOpen);
-  const { user, logout, isAdmin, canManageUsers } = useAuth();
+  const { user, logout, isAdmin, canManageUsers, canViewReports } = useAuth();
   
   // Local state
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
@@ -119,7 +123,7 @@ const AppLayout = ({ children }) => {
   };
 
   const roleInfo = getRoleInfo();
-  const navigation = getNavigation(isAdmin);
+  const navigation = getNavigation(isAdmin, canViewReports);
 
   const drawer = (
     <div>
@@ -289,7 +293,14 @@ const AppLayout = ({ children }) => {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              '&[inert]': {
+                visibility: 'hidden',
+                display: 'none',
+              }
+            },
           }}
         >
           {drawer}
@@ -298,7 +309,14 @@ const AppLayout = ({ children }) => {
           variant="persistent"
           sx={{
             display: { xs: 'none', sm: sidebarOpen ? 'block' : 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              '&[aria-hidden="true"]': {
+                visibility: 'hidden',
+                display: 'none',
+              }
+            },
           }}
           open={sidebarOpen}
         >

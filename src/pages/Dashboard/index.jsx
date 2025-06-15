@@ -20,7 +20,7 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { selectAllLeads } from '../../store/slices/leadsSlice';
+import { selectAllLeads } from '../../store/slices/leadsSlice.jsx';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -82,9 +82,9 @@ const Dashboard = () => {
       </Box>
       
       {/* Metrics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <Box sx={{ display: 'flex', gap: theme.spacing(2), padding: theme.spacing(2), mb: 4 }}>
         {metricCards.map((metric, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Box sx={{ width: '100%', flex: '1 1 0' }} key={index}>
             <Card 
               sx={{ 
                 borderRadius: 3,
@@ -134,9 +134,9 @@ const Dashboard = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
+          </Box>
         ))}
-      </Grid>
+      </Box>
       
       {/* Welcome Section */}
       <Paper 
@@ -221,4 +221,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

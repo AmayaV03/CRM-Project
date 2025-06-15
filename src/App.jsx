@@ -289,12 +289,14 @@ function App() {
   return (
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <BrowserRouter>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <AppRoutes />
-          </ThemeProvider>
-        </BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <BrowserRouter>
+            <div id="root">
+              <AppRoutes />
+            </div>
+          </BrowserRouter>
+        </ThemeProvider>
       </I18nextProvider>
     </Provider>
   );

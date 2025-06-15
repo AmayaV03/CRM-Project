@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authSlice from './slices/authSlice';
-import uiSlice from './slices/uiSlice';
-import leadsSlice from './slices/leadsSlice';
-import settingsSlice from './slices/settingsSlice';
+import authSlice from './slices/authSlice.jsx';
+import uiSlice from './slices/uiSlice.jsx';
+import leadsSlice from './slices/leadsSlice.jsx';
+import settingsSlice from './slices/settingsSlice.jsx';
 
 // Configure the Redux store with all slices
 export const store = configureStore({
@@ -12,11 +12,9 @@ export const store = configureStore({
     leads: leadsSlice,
     settings: settingsSlice,
   },
-  middleware: getDefaultMiddleware =>
+  middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-      },
+      serializableCheck: false
     }),
   devTools: process.env.NODE_ENV !== 'production',
-}); 
+});
