@@ -20,7 +20,7 @@ import {
   selectCanReassignLeads,
   selectCanViewReports,
   selectCanManageUsers
-} from '../store/slices/authSlice';
+} from '../store/slices/authSlice.jsx';
 import authService from '../services/authService';
 
 const useAuth = () => {

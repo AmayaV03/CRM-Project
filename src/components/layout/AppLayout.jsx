@@ -35,7 +35,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice';
+import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.jsx';
 import useAuth from '../../hooks/useAuth';
 import UserProfile from '../auth/UserProfile';
 
@@ -293,7 +293,14 @@ const AppLayout = ({ children }) => {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              '&[inert]': {
+                visibility: 'hidden',
+                display: 'none',
+              }
+            },
           }}
         >
           {drawer}
@@ -302,7 +309,14 @@ const AppLayout = ({ children }) => {
           variant="persistent"
           sx={{
             display: { xs: 'none', sm: sidebarOpen ? 'block' : 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              '&[aria-hidden="true"]': {
+                visibility: 'hidden',
+                display: 'none',
+              }
+            },
           }}
           open={sidebarOpen}
         >
