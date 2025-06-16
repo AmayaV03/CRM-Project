@@ -3,10 +3,14 @@ import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 const Leads = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ 
+      width: '100%',
+      direction: i18n.language === 'ar' ? 'rtl' : 'ltr',
+      textAlign: i18n.language === 'ar' ? 'right' : 'left'
+    }}>
       <Typography variant="h4" component="h1" gutterBottom>
         {t('leads.title')}
       </Typography>

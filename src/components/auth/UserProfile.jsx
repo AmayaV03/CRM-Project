@@ -75,11 +75,11 @@ const UserProfile = ({ open, onClose }) => {
 
   // Get role display name
   const getRoleDisplayName = (roles) => {
-    if (!roles || roles.length === 0) return 'No Role';
+    if (!roles || roles.length === 0) return t('settings.users.roles.noRole');
     const roleMap = {
-      admin: 'Administrator',
-      sales_manager: 'Sales Manager',
-      salesperson: 'Salesperson',
+      admin: t('settings.users.roles.admin'),
+      sales_manager: t('settings.users.roles.sales_manager'),
+      salesperson: t('settings.users.roles.salesperson'),
     };
     return roles.map(role => roleMap[role] || role).join(', ');
   };
@@ -165,10 +165,10 @@ const UserProfile = ({ open, onClose }) => {
           </Avatar>
           <Box>
             <Typography variant="h5" component="h1">
-              User Profile
+              {t('profile.title')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Manage your account information
+              {t('profile.subtitle')}
             </Typography>
           </Box>
         </Box>
@@ -191,7 +191,7 @@ const UserProfile = ({ open, onClose }) => {
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'between', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h6" component="h2">
-                    Profile Information
+                    {t('profile.information')}
                   </Typography>
                   <Button
                     startIcon={isEditing ? <CancelIcon /> : <EditIcon />}
@@ -206,7 +206,7 @@ const UserProfile = ({ open, onClose }) => {
                     variant={isEditing ? "outlined" : "contained"}
                     size="small"
                   >
-                    {isEditing ? 'Cancel' : 'Edit'}
+                    {isEditing ? t('common.cancel') : t('common.edit')}
                   </Button>
                 </Box>
 
@@ -217,14 +217,14 @@ const UserProfile = ({ open, onClose }) => {
                         name="name"
                         control={profileForm.control}
                         rules={{ required: t('validation.required') }}
-                        render={({ field }) => (
+                        render={({ field, fieldState: { error } }) => (
                           <TextField
                             {...field}
                             fullWidth
-                            label="Full Name"
+                            label={t('common.name')}
                             disabled={!isEditing}
-                            error={!!profileForm.formState.errors.name}
-                            helperText={profileForm.formState.errors.name?.message}
+                            error={!!error}
+                            helperText={error?.message}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
@@ -248,14 +248,14 @@ const UserProfile = ({ open, onClose }) => {
                             message: t('validation.email'),
                           },
                         }}
-                        render={({ field }) => (
+                        render={({ field, fieldState: { error } }) => (
                           <TextField
                             {...field}
                             fullWidth
-                            label="Email Address"
+                            label={t('common.email')}
                             disabled={!isEditing}
-                            error={!!profileForm.formState.errors.email}
-                            helperText={profileForm.formState.errors.email?.message}
+                            error={!!error}
+                            helperText={error?.message}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
@@ -272,12 +272,14 @@ const UserProfile = ({ open, onClose }) => {
                       <Controller
                         name="phone"
                         control={profileForm.control}
-                        render={({ field }) => (
+                        render={({ field, fieldState: { error } }) => (
                           <TextField
                             {...field}
                             fullWidth
-                            label="Phone Number"
+                            label={t('common.phone')}
                             disabled={!isEditing}
+                            error={!!error}
+                            helperText={error?.message}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
@@ -294,12 +296,14 @@ const UserProfile = ({ open, onClose }) => {
                       <Controller
                         name="department"
                         control={profileForm.control}
-                        render={({ field }) => (
+                        render={({ field, fieldState: { error } }) => (
                           <TextField
                             {...field}
                             fullWidth
-                            label="Department"
+                            label={t('profile.department')}
                             disabled={!isEditing}
+                            error={!!error}
+                            helperText={error?.message}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
@@ -321,7 +325,7 @@ const UserProfile = ({ open, onClose }) => {
                         startIcon={loading ? <CircularProgress size={16} /> : <SaveIcon />}
                         disabled={loading || !profileForm.formState.isValid}
                       >
-                        Save Changes
+                        {loading ? <CircularProgress size={24} /> : t('common.save')}
                       </Button>
                     </Box>
                   )}
@@ -335,7 +339,7 @@ const UserProfile = ({ open, onClose }) => {
             <Card variant="outlined" sx={{ mb: 2 }}>
               <CardContent>
                 <Typography variant="h6" component="h3" gutterBottom>
-                  Role & Permissions
+                  {t('profile.security')}
                 </Typography>
                 <Box sx={{ mb: 2 }}>
                   <Chip
@@ -365,16 +369,16 @@ const UserProfile = ({ open, onClose }) => {
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="h6" component="h3" gutterBottom>
-                    Security
+                    {t('profile.changePassword')}
                   </Typography>
                   <Button
                     fullWidth
                     variant="outlined"
-                    startIcon={<KeyIcon />}
+                    startIcon={<SecurityIcon />}
                     onClick={() => setShowPasswordDialog(true)}
                     sx={{ mb: 1 }}
                   >
-                    Change Password
+                    {t('profile.changePassword')}
                   </Button>
                   <Typography variant="caption" color="text.secondary">
                     Last updated: {new Date().toLocaleDateString()}
@@ -388,7 +392,7 @@ const UserProfile = ({ open, onClose }) => {
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} variant="outlined">
-          Close
+          {t('common.close')}
         </Button>
       </DialogActions>
 
@@ -396,14 +400,19 @@ const UserProfile = ({ open, onClose }) => {
       {user.roles?.includes('admin') && (
         <Dialog
           open={showPasswordDialog}
-          onClose={() => setShowPasswordDialog(false)}
+          onClose={() => {
+            setShowPasswordDialog(false);
+            setPasswordError('');
+            setPasswordSuccess('');
+            passwordForm.reset();
+          }}
           maxWidth="sm"
           fullWidth
         >
         <DialogTitle>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SecurityIcon />
-            Change Password
+            {t('profile.changePassword')}
           </Box>
         </DialogTitle>
 
@@ -429,7 +438,7 @@ const UserProfile = ({ open, onClose }) => {
                 <TextField
                   {...field}
                   fullWidth
-                  label="Current Password"
+                  label={t('profile.currentPassword')}
                   type={showPasswords.current ? 'text' : 'password'}
                   margin="dense"
                   error={!!passwordForm.formState.errors.currentPassword}
@@ -464,7 +473,7 @@ const UserProfile = ({ open, onClose }) => {
                 <TextField
                   {...field}
                   fullWidth
-                  label="New Password"
+                  label={t('profile.newPassword')}
                   type={showPasswords.new ? 'text' : 'password'}
                   margin="dense"
                   error={!!passwordForm.formState.errors.newPassword}
@@ -493,7 +502,7 @@ const UserProfile = ({ open, onClose }) => {
                 <TextField
                   {...field}
                   fullWidth
-                  label="Confirm New Password"
+                  label={t('profile.confirmPassword')}
                   type={showPasswords.confirm ? 'text' : 'password'}
                   margin="dense"
                   error={!!passwordForm.formState.errors.confirmPassword}
@@ -526,7 +535,7 @@ const UserProfile = ({ open, onClose }) => {
             disabled={loading || !passwordForm.formState.isValid}
             startIcon={loading ? <CircularProgress size={16} /> : <SaveIcon />}
           >
-            Change Password
+            {loading ? <CircularProgress size={24} /> : t('common.save')}
           </Button>
         </DialogActions>
       </Dialog>

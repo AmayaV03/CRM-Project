@@ -151,10 +151,10 @@ const AdminDashboard = () => {
           variant="scrollable"
           scrollButtons="auto"
         >
-          <Tab label="Overview" />
-          <Tab label="User Management" />
-          <Tab label="System Settings" />
-          <Tab label="Security" />
+          <Tab label={t('admin.tabs.overview')} />
+          <Tab label={t('admin.tabs.users')} />
+          <Tab label={t('admin.tabs.system')} />
+          <Tab label={t('admin.tabs.security')} />
         </Tabs>
       </Paper>
 
@@ -304,9 +304,7 @@ const AdminDashboard = () => {
       )}
 
       {selectedTab === 1 && <UserManagementPage />}
-
       {selectedTab === 2 && <SystemSettings />}
-
       {selectedTab === 3 && <SecuritySettings />}
     </Container>
   );

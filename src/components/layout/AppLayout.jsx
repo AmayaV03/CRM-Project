@@ -38,6 +38,7 @@ import { useTranslation } from 'react-i18next';
 import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice';
 import useAuth from '../../hooks/useAuth';
 import UserProfile from '../auth/UserProfile';
+import LanguageSelector from '../../pages/Settings/LanguageSelector';
 
 const drawerWidth = 240;
 
@@ -63,7 +64,7 @@ const getNavigation = (isAdmin) => {
 };
 
 const AppLayout = ({ children }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const sidebarOpen = useSelector(selectSidebarOpen);
@@ -98,8 +99,6 @@ const AppLayout = ({ children }) => {
     setShowUserProfile(true);
     handleUserMenuClose();
   };
-
-
 
   // Get role display info
   const getRoleInfo = () => {
@@ -169,7 +168,10 @@ const AppLayout = ({ children }) => {
         position="fixed"
         sx={{
           width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
-          ml: { sm: sidebarOpen ? `${drawerWidth}px` : 0 },
+          ml: i18n.language === 'ar' ? 0 : { sm: sidebarOpen ? `${drawerWidth}px` : 0 },
+          mr: i18n.language === 'ar' ? { sm: sidebarOpen ? `${drawerWidth}px` : 0 } : 0,
+          left: i18n.language === 'ar' ? 'auto' : 0,
+          right: i18n.language === 'ar' ? 0 : 'auto'
         }}
       >
         <Toolbar>
@@ -182,9 +184,14 @@ const AppLayout = ({ children }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: '#ffffff' }}>
             LeadOrbit
           </Typography>
+          
+          {/* Language Selector */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+            <LanguageSelector />
+          </Box>
           
           {/* User Info and Menu */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -252,7 +259,7 @@ const AppLayout = ({ children }) => {
               <Avatar sx={{ bgcolor: 'primary.main' }}>
                 <AccountCircleIcon />
               </Avatar>
-              Profile
+              {t('profile.title')}
             </MenuItem>
             
             {canManageUsers && (
@@ -278,7 +285,10 @@ const AppLayout = ({ children }) => {
       
       <Box
         component="nav"
-        sx={{ width: { sm: sidebarOpen ? drawerWidth : 0 }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { sm: sidebarOpen ? drawerWidth : 0 }, 
+          flexShrink: { sm: 0 }
+        }}
       >
         <Drawer
           variant="temporary"
@@ -289,7 +299,10 @@ const AppLayout = ({ children }) => {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth
+            },
           }}
         >
           {drawer}
@@ -298,7 +311,12 @@ const AppLayout = ({ children }) => {
           variant="persistent"
           sx={{
             display: { xs: 'none', sm: sidebarOpen ? 'block' : 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              right: i18n.language === 'ar' ? 0 : 'auto',
+              left: i18n.language === 'ar' ? 'auto' : 0
+            },
           }}
           open={sidebarOpen}
         >
@@ -329,8 +347,6 @@ const AppLayout = ({ children }) => {
         open={showUserProfile}
         onClose={() => setShowUserProfile(false)}
       />
-
-
     </Box>
   );
 };
