@@ -63,12 +63,6 @@ const SystemSettings = () => {
     cacheExpiration: 24,
     enableLazyLoading: true,
     maxConcurrentRequests: 5,
-    
-    // UI/UX Settings
-    defaultTheme: 'light',
-    enableAnimations: true,
-    showAdvancedFeatures: false,
-    compactMode: false,
   });
 
   const [savedSettings, setSavedSettings] = useState(null);
@@ -148,10 +142,6 @@ const SystemSettings = () => {
       cacheExpiration: 24,
       enableLazyLoading: true,
       maxConcurrentRequests: 5,
-      defaultTheme: 'light',
-      enableAnimations: true,
-      showAdvancedFeatures: false,
-      compactMode: false,
     };
     
     setSettings(defaultSettings);
@@ -395,63 +385,6 @@ const SystemSettings = () => {
                   onChange={(e) => handleSettingChange('performance', 'maxConcurrentRequests', parseInt(e.target.value))}
                   fullWidth
                   InputProps={{ inputProps: { min: 1, max: 20 } }}
-                />
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* UI/UX Settings */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardHeader
-              avatar={<LanguageIcon />}
-              title="UI/UX Settings"
-              subheader="User interface preferences"
-            />
-            <CardContent>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <FormControl fullWidth>
-                  <InputLabel>Default Theme</InputLabel>
-                  <Select
-                    value={settings.defaultTheme}
-                    onChange={(e) => handleSettingChange('ui', 'defaultTheme', e.target.value)}
-                    label="Default Theme"
-                  >
-                    <MenuItem value="light">Light</MenuItem>
-                    <MenuItem value="dark">Dark</MenuItem>
-                    <MenuItem value="auto">Auto (System)</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={settings.enableAnimations}
-                      onChange={(e) => handleSettingChange('ui', 'enableAnimations', e.target.checked)}
-                    />
-                  }
-                  label="Enable Animations"
-                />
-
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={settings.showAdvancedFeatures}
-                      onChange={(e) => handleSettingChange('ui', 'showAdvancedFeatures', e.target.checked)}
-                    />
-                  }
-                  label="Show Advanced Features"
-                />
-
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={settings.compactMode}
-                      onChange={(e) => handleSettingChange('ui', 'compactMode', e.target.checked)}
-                    />
-                  }
-                  label="Compact Mode"
                 />
               </Box>
             </CardContent>
