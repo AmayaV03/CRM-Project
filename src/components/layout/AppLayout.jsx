@@ -185,13 +185,19 @@ const AppLayout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ 
+      display: 'flex', 
+      height: '100vh', 
+      overflow: 'hidden',
+      background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
+      backgroundAttachment: 'fixed'
+    }}>
       <AppBar
         position="fixed"
         sx={{
           width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
           ml: { sm: sidebarOpen ? `${drawerWidth}px` : 0 },
-          background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
+          background: 'linear-gradient(145deg,#FF6B35 0%, #F7931E50 100%)',
           color: '#FF6B35',
           boxShadow: 1,
           borderRadius: 0
