@@ -230,9 +230,10 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
     switch (filter) {
       case 'followed':
         return leads.filter(lead => 
-          lead.status === 'Contacted' && 
-          lead.lastFollowupDate && 
-          new Date(lead.lastFollowupDate) <= today
+          // Show leads that have been contacted or are in follow-up status
+          (lead.status === 'Contacted' || lead.status === 'Follow-up') &&
+          // Either have a lastFollowupDate or nextFollowupDate (indicating some follow-up activity)
+          (lead.lastFollowupDate || lead.nextFollowupDate)
         );
       case 'scheduled':
         return leads.filter(lead => 
@@ -241,8 +242,10 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
         );
       case 'notFollowed':
         return leads.filter(lead => 
-          lead.nextFollowupDate && 
-          new Date(lead.nextFollowupDate) < today
+          // Show leads that need follow-up but haven't been followed up on
+          (lead.status === 'New' || 
+           (lead.nextFollowupDate && new Date(lead.nextFollowupDate) < today) ||
+           (lead.status === 'Contacted' && !lead.lastFollowupDate && !lead.nextFollowupDate))
         );
       default:
         return leads;
@@ -252,17 +255,20 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
   // Get badge counts for tabs
   const allLeadsCount = leads.length;
   const followedCount = leads.filter(lead => 
-    lead.status === 'Contacted' && 
-    lead.lastFollowupDate && 
-    new Date(lead.lastFollowupDate) <= today
+    // Show leads that have been contacted or are in follow-up status
+    (lead.status === 'Contacted' || lead.status === 'Follow-up') &&
+    // Either have a lastFollowupDate or nextFollowupDate (indicating some follow-up activity)
+    (lead.lastFollowupDate || lead.nextFollowupDate)
   ).length;
   const scheduledCount = leads.filter(lead => 
     lead.nextFollowupDate && 
     new Date(lead.nextFollowupDate) > today
   ).length;
   const notFollowedCount = leads.filter(lead => 
-    lead.nextFollowupDate && 
-    new Date(lead.nextFollowupDate) < today
+    // Show leads that need follow-up but haven't been followed up on
+    (lead.status === 'New' || 
+     (lead.nextFollowupDate && new Date(lead.nextFollowupDate) < today) ||
+     (lead.status === 'Contacted' && !lead.lastFollowupDate && !lead.nextFollowupDate))
   ).length;
 
   // Event handlers

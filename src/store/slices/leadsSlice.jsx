@@ -27,6 +27,7 @@ const initialState = {
       source: 'Referral',
       assignedTo: 'Sarah Johnson',
       nextFollowupDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      lastFollowupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       lastActivity: new Date().toISOString(),
@@ -97,6 +98,7 @@ const initialState = {
       source: 'Email Campaign',
       assignedTo: 'Sarah Johnson',
       nextFollowupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+      lastFollowupDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       lastActivity: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -185,6 +187,20 @@ const initialState = {
       updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       lastActivity: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       notes: []
+    },
+    {
+      id: '14',
+      name: 'David Miller',
+      email: 'david@example.com',
+      company: 'StartupCorp',
+      status: 'Contacted',
+      source: 'LinkedIn',
+      assignedTo: 'John Smith',
+      nextFollowupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Overdue
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      lastActivity: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      notes: []
     }
 
 
@@ -206,78 +222,7 @@ const initialState = {
 
 // Initialize localStorage with dummy data if it's empty
 if (!localStorage.getItem('crm_leads')) {
-  const dummyLeads = [
-    {
-      id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-      company: 'Example Corp',
-      status: 'New',
-      source: 'Website',
-      assignedTo: 'John Smith',
-      nextFollowupDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      lastActivity: new Date().toISOString(),
-      notes: []
-    },
-    {
-      id: '2',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      company: 'Tech Solutions',
-      status: 'Contacted',
-      source: 'Referral',
-      assignedTo: 'Sarah Johnson',
-      nextFollowupDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      lastActivity: new Date().toISOString(),
-      notes: []
-    },
-    {
-      id: '3',
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      company: 'Digital Solutions',
-      status: 'Won',
-      source: 'Trade Show',
-      assignedTo: 'Sarah Johnson',
-      nextFollowupDate: null,
-      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      lastActivity: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      notes: []
-    },
-    {
-      id: '4',
-      name: 'Emily Davis',
-      email: 'emily@example.com',
-      company: 'Innovate Tech',
-      status: 'Lost',
-      source: 'Cold Call',
-      assignedTo: 'John Smith',
-      nextFollowupDate: null,
-      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      lastActivity: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      notes: []
-    },
-    {
-      id: '5',
-      name: 'Robert Wilson',
-      email: 'robert@example.com',
-      company: 'Tech Innovations',
-      status: 'Follow-up',
-      source: 'Email Campaign',
-      assignedTo: 'Sarah Johnson',
-      nextFollowupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      lastActivity: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      notes: []
-    }
-  ];
+  const dummyLeads = initialState.items;
   localStorage.setItem('crm_leads', JSON.stringify(dummyLeads));
 }
 
