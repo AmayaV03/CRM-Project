@@ -287,7 +287,6 @@ export const fetchLeads = createAsyncThunk(
   'leads/fetchLeads',
   async () => {
     const leads = await leadService.getAll();
-    localStorage.setItem('crm_leads', JSON.stringify(leads));
     return leads;
   }
 );
@@ -296,10 +295,8 @@ export const addLead = createAsyncThunk(
   'leads/addLead',
   async (leadData, thunkAPI) => {
     try {
+      // leadService.create() already handles saving to localStorage
       const newLead = await leadService.create(leadData);
-      const currentLeads = JSON.parse(localStorage.getItem('crm_leads') || '[]');
-      const updatedLeads = [...currentLeads, newLead];
-      localStorage.setItem('crm_leads', JSON.stringify(updatedLeads));
       return newLead;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -311,12 +308,8 @@ export const updateLead = createAsyncThunk(
   'leads/updateLead',
   async (data, thunkAPI) => {
     try {
+      // leadService.update() already handles saving to localStorage
       const updatedLead = await leadService.update(data);
-      const currentLeads = JSON.parse(localStorage.getItem('crm_leads') || '[]');
-      const updatedLeads = currentLeads.map(lead => 
-        lead.id === updatedLead.id ? updatedLead : lead
-      );
-      localStorage.setItem('crm_leads', JSON.stringify(updatedLeads));
       return updatedLead;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
