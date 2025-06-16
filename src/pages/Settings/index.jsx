@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Typography, Container, Paper, Tabs, Tab } from '@mui/material';
-import LanguageSettings from '../settings/LanguageSettings';
+import LanguageSettings from '../Settings/LanguageSettings';
 import ThemeSettings from '../settings/ThemeSettings';
-import RegionalSettings from '../settings/RegionalSettings';
+import RegionalSettings from '../Settings/RegionalSettings';
 import PreferenceSettings from './PreferenceSettings';
 
 const Settings = () => {
