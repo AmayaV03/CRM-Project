@@ -471,4 +471,23 @@ class AuthService {
   }
 }
 
+// Role-based permission service
+export const getRolePermissions = (roles) => {
+  if (roles.includes('admin')) 
+    return ['manage_leads', 'manage_users', 'view_reports', 'reassign_leads', 'export_data'];
+  
+  if (roles.includes('sales_manager')) 
+    return ['manage_leads', 'view_reports', 'reassign_leads', 'export_data'];
+    
+  if (roles.includes('salesperson')) 
+    return ['manage_leads'];
+    
+  return [];
+};
+
+export const hasPermission = (userRoles, requiredPermission) => {
+  const permissions = getRolePermissions(userRoles);
+  return permissions.includes(requiredPermission);
+};
+
 export default new AuthService(); 

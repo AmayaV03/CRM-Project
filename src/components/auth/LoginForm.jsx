@@ -117,6 +117,38 @@ const LoginForm = () => {
     try {
       clearAuthError();
       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       const result = await login(data.email, data.password);
       
       // Save email if remember me is checked
