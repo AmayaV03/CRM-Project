@@ -45,10 +45,25 @@ const LeadForm = ({ lead = null, onSubmit, onCancel }) => {
     source: yup.string().required('Lead source is required'),
     status: yup.string().required('Status is required'),
     assignedTo: yup.string().required('Assigned to is required'),
+    dealAmount: yup
+      .number()
+      .typeError('Deal amount must be a number')
+      .min(0, 'Deal amount cannot be negative')
+      .nullable(),
+    winProbability: yup
+      .number()
+      .typeError('Win probability must be a number')
+      .min(0, 'Win probability cannot be less than 0')
+      .max(100, 'Win probability cannot be more than 100')
+      .nullable(),
+    expectedCloseDate: yup.date()
+      .nullable()
+      .typeError('Please select a valid date')
+      .min(new Date(), 'Expected close date cannot be in the past'),
     nextFollowupDate: yup.date()
       .nullable()
       .typeError('Please select a valid date')
-      .min(new Date(), 'Date cannot be in the past'),
+      .min(new Date(), 'Follow-up date cannot be in the past'),
     notes: yup.string().nullable()
   });
 
@@ -62,6 +77,9 @@ const LeadForm = ({ lead = null, onSubmit, onCancel }) => {
       source: sourceOptions.includes(lead?.source) ? lead?.source : 'website',
       status: statusOptions.includes(lead?.status) ? lead?.status : 'New',
       assignedTo: lead?.assignedTo || '',
+      dealAmount: lead?.dealAmount || lead?.amount || lead?.value || lead?.total || 0,
+      winProbability: lead?.winProbability !== undefined ? lead.winProbability * 100 : 0, // Convert from decimal to percentage
+      expectedCloseDate: lead?.expectedCloseDate || null,
       nextFollowupDate: lead?.nextFollowupDate ? format(new Date(lead?.nextFollowupDate), 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
       notes: lead?.notes || ''
     },
@@ -202,12 +220,67 @@ const LeadForm = ({ lead = null, onSubmit, onCancel }) => {
           />
           <TextField
             fullWidth
+            label="Deal Amount ($)"
+            margin="normal"
+            type="number"
+            inputProps={{
+              step: '0.01',
+              min: 0
+            }}
+            {...register('dealAmount')}
+            error={!!errors.dealAmount}
+            helperText={errors.dealAmount?.message}
+          />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              fullWidth
+              label="Win Probability %"
+              margin="normal"
+              type="number"
+              inputProps={{
+                min: 0,
+                max: 100,
+                step: 5
+              }}
+              {...register('winProbability', {
+                valueAsNumber: true,
+                setValueAs: value => value === '' ? null : Number(value)
+              })}
+              error={!!errors.winProbability}
+              helperText={errors.winProbability?.message}
+            />
+            <TextField
+              fullWidth
+              label="Expected Close Date"
+              margin="normal"
+              type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register('expectedCloseDate', {
+                valueAsDate: true,
+                setValueAs: val => val ? new Date(val) : null
+              })}
+              error={!!errors.expectedCloseDate}
+              helperText={errors.expectedCloseDate?.message}
+              InputProps={{
+                inputProps: {
+                  min: new Date().toISOString().split('T')[0]
+                }
+              }}
+            />
+          </Box>
+          <TextField
+            fullWidth
             label="Next Follow-up Date"
             margin="normal"
             type="date"
+            InputLabelProps={{
+              shrink: true,
+            }}
             {...register('nextFollowupDate', { 
               valueAsDate: true,
-              setValueAs: (val) => val ? new Date(val) : null,
+              setValueAs: val => val ? new Date(val) : null,
               value: lead?.nextFollowupDate ? new Date(lead.nextFollowupDate) : new Date()
             })}
             error={!!errors.nextFollowupDate}
