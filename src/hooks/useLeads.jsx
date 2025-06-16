@@ -3,7 +3,16 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchLeads, addLead, updateLead, deleteLead as deleteLeadAction } from '../store/slices/leadsSlice.jsx';
+import { 
+  fetchLeads, 
+  addLead, 
+  updateLead, 
+  deleteLead as deleteLeadAction,
+  setFilters as setFiltersAction,
+  clearFilters as clearFiltersAction,
+  setSort as setSortAction,
+  setSelectedLead as setSelectedLeadAction
+} from '../store/slices/leadsSlice.jsx';
 
 export const useLeads = () => {
   const dispatch = useDispatch();
@@ -47,19 +56,19 @@ export const useLeads = () => {
   }, [dispatch]);
 
   const setFilters = useCallback((filters) => {
-    dispatch(leadsSlice.actions.setFilters(filters));
+    dispatch(setFiltersAction(filters));
   }, [dispatch]);
 
   const clearFilters = useCallback(() => {
-    dispatch(leadsSlice.actions.clearFilters());
+    dispatch(clearFiltersAction());
   }, [dispatch]);
 
   const setSort = useCallback((sortBy, sortOrder) => {
-    dispatch(leadsSlice.actions.setSort({ sortBy, sortOrder }));
+    dispatch(setSortAction({ sortBy, sortOrder }));
   }, [dispatch]);
 
   const setSelectedLead = useCallback((lead) => {
-    dispatch(leadsSlice.actions.setSelectedLead(lead));
+    dispatch(setSelectedLeadAction(lead));
   }, [dispatch]);
 
   return {
