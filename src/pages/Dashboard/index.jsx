@@ -8,7 +8,8 @@ import {
   CardContent,
   Chip,
   Avatar,
-  useTheme
+  useTheme,
+  Button
 } from '@mui/material';
 import {
   TrendingUp,
@@ -16,16 +17,74 @@ import {
   Schedule,
   CheckCircle,
   Cancel,
-  Business
+  Business,
+  Download
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { selectAllLeads } from '../../store/slices/leadsSlice.jsx';
+import { selectAllLeads } from '../../store/slices/leadsSlice';
+import DashboardMetrics from '../../components/dashboard/DashboardMetrics';
+import PieChart from '../../components/charts/PieChart';
+import BarChart from '../../components/charts/BarChart';
+import { exportDashboardData } from '../../services/reportService';
+import { hasPermission } from '../../services/authService';
+import AdminTools from '../../components/admin/AdminTools';
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const leads = useSelector(selectAllLeads);
+  const { roles } = useSelector(state => state.auth.user);
+
+  // Show export button only for authorized roles
+  const showExportButton = hasPermission(roles, 'export_data');
+
+  // Mock data now inside component where theme is available
+  const mockData = {
+    metrics: [
+      {
+        title: 'Total Leads',
+        value: 142,
+        icon: '👥',
+        color: theme.palette.primary.main,
+        bgColor: `${theme.palette.primary.main}15`
+      },
+      {
+        title: 'Converted',
+        value: 42,
+        icon: '✅', 
+        color: theme.palette.success.main,
+        bgColor: `${theme.palette.success.main}15`
+      },
+      {
+        title: 'Pending',
+        value: 68,
+        icon: '⏳',
+        color: theme.palette.warning.main,
+        bgColor: `${theme.palette.warning.main}15`
+      },
+      {
+        title: 'Lost',
+        value: 32,
+        icon: '❌',
+        color: theme.palette.error.main,
+        bgColor: `${theme.palette.error.main}15`
+      }
+    ],
+    leadDistribution: [
+      { name: 'Web', value: 65 },
+      { name: 'Referral', value: 32 },
+      { name: 'Event', value: 28 },
+      { name: 'Other', value: 17 }
+    ],
+    statusAnalysis: [
+      { name: 'New', value: 42 },
+      { name: 'Contacted', value: 38 },
+      { name: 'Qualified', value: 27 },
+      { name: 'Proposal', value: 15 },
+      { name: 'Closed', value: 20 }
+    ]
+  };
 
   const metricCards = [
     {
@@ -58,86 +117,142 @@ const Dashboard = () => {
     },
   ];
 
+  const handleExport = () => {
+    exportDashboardData(mockData);
+  };
+
   return (
     <Box sx={{ p: 3, bgcolor: 'background.default', minHeight: '100vh' }}>
       {/* Header Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography 
-          variant="h4" 
-          component="h1" 
-          gutterBottom
-          sx={{
-            fontWeight: 700,
-            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        mb: 4,
+        alignItems: 'center'
+      }}>
+        <Typography variant="h4" sx={{ 
+          fontWeight: 700,
+          color: theme.palette.text.primary,
+          letterSpacing: '-0.5px'
+        }}>
           {t('dashboard.title')}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Monitor your sales performance and track your progress
-        </Typography>
+        {showExportButton && (
+          <Button 
+            variant="contained"
+            startIcon={<Download />}
+            onClick={handleExport}
+            sx={{
+              borderRadius: '8px',
+              textTransform: 'none',
+              boxShadow: theme.shadows[2],
+              '&:hover': {
+                boxShadow: theme.shadows[4]
+              }
+            }}
+          >
+            {t('dashboard.export')}
+          </Button>
+        )}
       </Box>
-      
+
       {/* Metrics Cards */}
-      <Box sx={{ display: 'flex', gap: theme.spacing(2), padding: theme.spacing(2), mb: 4 }}>
-        {metricCards.map((metric, index) => (
-          <Box sx={{ width: '100%', flex: '1 1 0' }} key={index}>
-            <Card 
-              sx={{ 
-                borderRadius: 3,
-                border: `1px solid ${metric.color}20`,
-                boxShadow: `0 4px 20px ${metric.color}15`,
-                transition: 'all 0.3s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: `0 8px 30px ${metric.color}25`,
-                }
-              }}
-            >
-              <CardContent sx={{ p: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                  <Avatar
-                    sx={{
-                      bgcolor: metric.bgColor,
-                      color: metric.color,
-                      width: 48,
-                      height: 48,
-                    }}
-                  >
-                    {metric.icon}
-                  </Avatar>
-                  <Chip
-                    label="Active"
-                    size="small"
-                    sx={{
-                      bgcolor: metric.bgColor,
-                      color: metric.color,
-                      fontWeight: 500,
-                    }}
-                  />
-                </Box>
-                <Typography 
-                  variant="h3" 
-                  sx={{ 
-                    fontWeight: 700, 
-                    color: metric.color,
-                    mb: 1
-                  }}
-                >
-                  {metric.value}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {metricCards.map((card, index) => (
+          <Grid key={index} xs={12} sm={6} md={3}>
+            <Card sx={{ 
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              borderRadius: '12px',
+              background: card.bgColor,
+              boxShadow: theme.shadows[2],
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: theme.shadows[4]
+              }
+            }}>
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="subtitle2" color="textSecondary" sx={{ mb: 1 }}>
+                  {card.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                  {metric.title}
+                <Typography variant="h4" sx={{ fontWeight: 800, color: card.color }}>
+                  {card.value}
                 </Typography>
               </CardContent>
+              <Box sx={{ 
+                p: 2,
+                display: 'flex',
+                justifyContent: 'flex-end'
+              }}>
+                <Avatar sx={{ 
+                  bgcolor: card.color,
+                  width: 56,
+                  height: 56,
+                  color: theme.palette.getContrastText(card.color)
+                }}>
+                  {card.icon}
+                </Avatar>
+              </Box>
             </Card>
-          </Box>
+          </Grid>
         ))}
-      </Box>
-      
+      </Grid>
+
+      {/* Charts Section */}
+      <Paper sx={{
+        p: 3,
+        mb: 4,
+        borderRadius: '16px',
+        background: theme.palette.background.paper,
+        boxShadow: theme.shadows[1]
+      }}>
+        <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
+          <Grid xs={12} lg={6}>
+            <Box sx={{ 
+              height: '400px',
+              width: '100%',
+              minWidth: '500px'
+            }}>
+              <PieChart 
+                data={mockData.leadDistribution}
+                colors={[
+                  theme.palette.primary.main,
+                  theme.palette.secondary.main,
+                  theme.palette.success.main,
+                  theme.palette.warning.main
+                ]}
+                title="Lead Sources"
+              />
+            </Box>
+          </Grid>
+          <Grid xs={12} lg={6}>
+            <Box sx={{
+              height: '400px',
+              width: '100%',
+              minWidth: '500px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <BarChart
+                data={mockData.statusAnalysis}
+                bars={[{
+                  dataKey: 'value',
+                  color: theme.palette.primary.main,
+                  label: 'Leads'
+                }]}
+                title="Lead Status"
+              />
+            </Box>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      {/* Analytics Section */}
+      <DashboardMetrics metrics={mockData.metrics} />
+
       {/* Welcome Section */}
       <Paper 
         sx={{ 
@@ -170,18 +285,17 @@ const Dashboard = () => {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Welcome to LeadOrbit
+              {t('dashboard.welcome.title')}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-              Your intelligent lead management system is ready to transform your sales journey. 
-              Start by adding leads, exploring features, and accelerating your business growth.
+              {t('dashboard.welcome.description')}
             </Typography>
           </Box>
         </Box>
         
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Chip
-            label="🚀 Get Started"
+            label={t('dashboard.welcome.getStarted')}
             sx={{
               bgcolor: theme.palette.primary.main,
               color: 'white',
@@ -192,7 +306,7 @@ const Dashboard = () => {
             }}
           />
           <Chip
-            label="📊 View Analytics"
+            label={t('dashboard.welcome.viewAnalytics')}
             variant="outlined"
             sx={{
               borderColor: theme.palette.primary.main,
@@ -217,6 +331,9 @@ const Dashboard = () => {
           />
         </Box>
       </Paper>
+      {hasPermission(roles, 'manage_users') && (
+        <AdminTools />
+      )}
     </Box>
   );
 };

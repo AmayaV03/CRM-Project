@@ -30,6 +30,7 @@ import {
   AccountCircle as AccountCircleIcon,
   SupervisorAccount as SupervisorAccountIcon,
   AdminPanelSettings as AdminIcon,
+  Language as LanguageIcon,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -64,14 +65,16 @@ const getNavigation = (isAdmin, canViewReports) => {
 };
 
 const AppLayout = ({ children }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const sidebarOpen = useSelector(selectSidebarOpen);
   const { user, logout, isAdmin, canManageUsers, canViewReports } = useAuth();
 
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
+  const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -99,6 +102,20 @@ const AppLayout = ({ children }) => {
   const handleProfileClick = () => {
     setShowUserProfile(true);
     handleUserMenuClose();
+  };
+
+  const handleLanguageClick = (event) => {
+    setLanguageMenuAnchor(event.currentTarget);
+  };
+
+  const handleLanguageClose = () => {
+    setLanguageMenuAnchor(null);
+  };
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    document.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    handleLanguageClose();
   };
 
   const getRoleInfo = () => {
@@ -200,13 +217,27 @@ const AppLayout = ({ children }) => {
       height: '100vh', 
       overflow: 'hidden',
       background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
-      backgroundAttachment: 'fixed'
+      backgroundAttachment: 'fixed',
+      direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
     }}>
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
-          ml: { sm: sidebarOpen ? `${drawerWidth}px` : 0 },
+          width: { 
+            sm: sidebarOpen 
+              ? `calc(100% - ${drawerWidth}px)` 
+              : '100%' 
+          },
+          ml: { 
+            sm: i18n.language === 'ar' 
+              ? 0 
+              : (sidebarOpen ? `${drawerWidth}px` : 0) 
+          },
+          mr: { 
+            sm: i18n.language === 'ar' 
+              ? (sidebarOpen ? `${drawerWidth}px` : 0) 
+              : 0 
+          },
           background: 'linear-gradient(145deg,#FF6B35 0%, #F7931E50 100%)',
           color: '#FF6B35',
           boxShadow: 1,
@@ -215,8 +246,11 @@ const AppLayout = ({ children }) => {
       >
         <Toolbar sx={{ 
           background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
-          borderRadius: 0
+          borderRadius: 0,
+          display: 'flex',
+          justifyContent: 'space-between'
         }}>
+
           <IconButton
             color="inherit"
             aria-label="toggle drawer"
@@ -227,13 +261,15 @@ const AppLayout = ({ children }) => {
             <MenuIcon />
           </IconButton>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', justifyContent: 'flex-end' }}>
+
+         
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Chip
                 label={roleInfo.label}
                 color="default"
                 size="small"
                 variant="outlined"
-                sx={{ color: '#FF6B35', borderColor: '#FF6B35' }}
+                sx={{ color: 'white', borderColor: 'white' }}
               />
             </Box>
 
@@ -242,7 +278,7 @@ const AppLayout = ({ children }) => {
               onClick={handleUserMenuClick}
               sx={{ p: 0 }}
             >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 107, 53, 0.1)', color: '#FF6B35' }}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 107, 53, 0.1)', color: 'white' }}>
                 {user?.name?.charAt(0)?.toUpperCase() || <PersonIcon />}
               </Avatar>
             </IconButton>
@@ -287,13 +323,13 @@ const AppLayout = ({ children }) => {
               <Avatar sx={{ bgcolor: 'primary.main' }}>
                 <AccountCircleIcon />
               </Avatar>
-              Profile
+              {t('profile.title')}
             </MenuItem>
 
             {canManageUsers && (
               <MenuItem onClick={() => navigate('/admin')}>
                 <Avatar sx={{ bgcolor: 'secondary.main' }}>
-                  <SupervisorAccountIcon />
+                  <SupervisorAccountIcon sx={{ color: 'white' }} />
                 </Avatar>
                 Admin Panel
               </MenuItem>
@@ -313,39 +349,46 @@ const AppLayout = ({ children }) => {
 
       <Box
         component="nav"
-        sx={{ width: { sm: sidebarOpen ? drawerWidth : 0 }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { sm: sidebarOpen ? drawerWidth : 0 }, 
+          flexShrink: { sm: 0 }
+        }}
       >
         <Drawer
           variant="temporary"
           open={sidebarOpen}
           onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
+          ModalProps={{
+            keepMounted: true,
+          }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
               width: drawerWidth,
               background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
               color: 'white',
               borderRadius: 0
             },
           }}
+          anchor={i18n.language === 'ar' ? 'right' : 'left'}
         >
           {drawer}
         </Drawer>
         <Drawer
-          variant="persistent"
-          open={sidebarOpen}
+          variant="permanent"
           sx={{
-            display: { xs: 'none', sm: sidebarOpen ? 'block' : 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
               width: drawerWidth,
               background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
               color: 'white',
               borderRadius: 0
             },
           }}
+          open
+          anchor={i18n.language === 'ar' ? 'right' : 'left'}
         >
           {drawer}
         </Drawer>

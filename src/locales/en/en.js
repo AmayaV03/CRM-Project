@@ -52,6 +52,13 @@ export default {
   // Dashboard
   dashboard: {
     title: 'Dashboard',
+    welcome: {
+      title: 'Welcome to CRM Dashboard',
+      subtitle: 'Manage your leads and track your progress',
+      description: 'Smart lead management system ready to transform your sales journey. Start by adding leads, exploring features, and accelerating your business growth.',
+      getStarted: '🚀 Get Started',
+      viewAnalytics: '📊 View Analytics'
+    },
     newLeads: 'New Leads',
     coldLeads: 'Cold Leads',
     conversionRate: 'Conversion Rate',
@@ -181,6 +188,11 @@ export default {
   // Settings
   settings: {
     title: 'Settings',
+    language: 'Language',
+    theme: 'Theme',
+    regional: 'Regional Settings',
+    lightMode: 'Light Mode',
+    darkMode: 'Dark Mode',
     tabs: {
       general: 'General',
       leadStatuses: 'Lead Statuses',
@@ -228,15 +240,49 @@ export default {
       },
     },
     preferences: {
-      theme: 'Theme',
-      sidebarCollapsed: 'Sidebar Collapsed',
-      notifications: 'Notifications',
-      autoBackup: 'Auto Backup',
-      themes: {
-        light: 'Light',
-        dark: 'Dark',
-        auto: 'Auto',
+      title: 'Preferences',
+      notifications: {
+        title: 'Notifications',
+        email: 'Email Notifications',
+        browser: 'Browser Notifications',
+        desktop: 'Desktop Notifications',
+        sound: 'Sound Alerts'
       },
+      display: {
+        title: 'Display Settings',
+        density: 'Display Density',
+        fontSize: 'Font Size',
+        showAvatars: 'Show User Avatars',
+        showStatus: 'Show Status Indicators',
+        densities: {
+          compact: 'Compact',
+          comfortable: 'Comfortable',
+          spacious: 'Spacious'
+        },
+        fontSizes: {
+          small: 'Small',
+          medium: 'Medium',
+          large: 'Large'
+        }
+      },
+      data: {
+        title: 'Data Settings',
+        itemsPerPage: 'Items Per Page',
+        defaultView: 'Default View',
+        autoRefresh: 'Auto Refresh',
+        refreshInterval: 'Refresh Interval (minutes)',
+        views: {
+          list: 'List View',
+          grid: 'Grid View',
+          kanban: 'Kanban View'
+        }
+      },
+      security: {
+        title: 'Security Settings',
+        twoFactor: 'Two-Factor Authentication',
+        sessionTimeout: 'Session Timeout (minutes)',
+        passwordExpiry: 'Password Expiry (days)'
+      }
     },
   },
 
@@ -312,5 +358,33 @@ export default {
     min: 'Must be at least {min}',
     max: 'Must be no more than {max}',
     pattern: 'Invalid format',
+  },
+
+  // Profile
+  profile: {
+    title: 'Profile',
+    subtitle: 'Manage your account information',
+    information: 'Profile Information',
+    security: 'Security',
+    department: 'Department',
+    changePassword: 'Change Password',
+    currentPassword: 'Current Password',
+    newPassword: 'New Password',
+    confirmPassword: 'Confirm Password',
+    passwordChanged: 'Password changed successfully',
+    passwordError: 'Failed to change password',
+    passwordMismatch: 'New passwords do not match',
+    passwordLength: 'Password must be at least 6 characters',
+  },
+
+  // Admin
+  admin: {
+    title: 'Admin Panel',
+    tabs: {
+      overview: 'Overview',
+      users: 'User Management',
+      system: 'System Settings',
+      security: 'Security'
+    }
   },
 }; 

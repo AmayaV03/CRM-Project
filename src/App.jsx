@@ -1,17 +1,18 @@
-import React from 'react';
-import { Provider } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Provider, useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { I18nextProvider } from 'react-i18next';
 import { store } from './store';
-import i18n from './locales';
+import i18n from './locales/en/index';
 import AppRoutes from './components/layout/AppRoutes';
+import { selectTheme, setTheme } from './store/slices/uiSlice';
 
-// Create Enhanced Material-UI theme for LeadOrbit CRM
-const theme = createTheme({
+// Create theme based on mode
+const getTheme = (mode) => createTheme({
   palette: {
-    mode: 'light',
+    mode,
     primary: {
       main: '#FF6B35',
       light: '#FF8C42',
@@ -45,13 +46,13 @@ const theme = createTheme({
       dark: '#1b5e20',
     },
     background: {
-      default: '#f8fafc',
-      paper: '#ffffff',
+      default: mode === 'dark' ? '#121212' : '#f8fafc',
+      paper: mode === 'dark' ? '#1e1e1e' : '#ffffff',
     },
     text: {
-      primary: 'rgba(0, 0, 0, 0.87)',
-      secondary: 'rgba(0, 0, 0, 0.6)',
-      disabled: 'rgba(0, 0, 0, 0.38)',
+      primary: mode === 'dark' ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+      secondary: mode === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+      disabled: mode === 'dark' ? 'rgba(255, 255, 255, 0.38)' : 'rgba(0, 0, 0, 0.38)',
     },
   },
   typography: {
@@ -124,7 +125,7 @@ const theme = createTheme({
           margin: 0,
           padding: 0,
           boxSizing: 'border-box',
-          backgroundColor: '#f8fafc',
+          backgroundColor: mode === 'dark' ? '#121212' : '#f8fafc',
           height: '100vh',
           overflow: 'hidden',
         },
@@ -217,8 +218,14 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
-          backgroundImage: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+          backgroundColor: mode === 'dark' ? '#1e1e1e' : '#ffffff',
+          color: mode === 'dark' ? '#ffffff' : '#000000',
+          boxShadow: mode === 'dark' 
+            ? '0 1px 3px rgba(255, 255, 255, 0.12), 0 1px 2px rgba(255, 255, 255, 0.24)'
+            : '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+          backgroundImage: mode === 'dark' 
+            ? 'linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%)'
+            : 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
         },
       },
     },
@@ -285,21 +292,47 @@ const theme = createTheme({
   },
 });
 
-function App() {
+// Theme wrapper component that uses the theme from Redux
+const ThemeWrapper = ({ children }) => {
+  const dispatch = useDispatch();
+  const mode = useSelector(selectTheme);
+  const theme = React.useMemo(() => getTheme(mode), [mode]);
+
+  // Initialize theme from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme && savedTheme !== mode) {
+      dispatch(setTheme(savedTheme));
+    }
+  }, []);
+
+  // Update document theme attribute when mode changes
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', mode);
+    // Update body background color
+    document.body.style.backgroundColor = mode === 'dark' ? '#121212' : '#f8fafc';
+  }, [mode]);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
+};
+
+const App = () => {
   return (
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <BrowserRouter>
-            <div id="root">
-              <AppRoutes />
-            </div>
-          </BrowserRouter>
-        </ThemeProvider>
+        <BrowserRouter>
+          <ThemeWrapper>
+            <AppRoutes />
+          </ThemeWrapper>
+        </BrowserRouter>
       </I18nextProvider>
     </Provider>
   );
-}
+};
 
 export default App;
