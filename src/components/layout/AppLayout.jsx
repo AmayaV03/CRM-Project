@@ -34,7 +34,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.jsx';
+import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.js';
 import useAuth from '../../hooks/useAuth';
 import UserProfile from '../auth/UserProfile';
 
@@ -207,7 +207,20 @@ const AppLayout = ({ children }) => {
           background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
           borderRadius: 0
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', justifyContent: 'flex-end' }}>
+          <IconButton
+            color="inherit"
+            aria-label="toggle drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: '#ffffff' }}>
+            LeadOrbit
+          </Typography>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Chip
                 label={roleInfo.label}
@@ -268,7 +281,7 @@ const AppLayout = ({ children }) => {
               <Avatar sx={{ bgcolor: 'primary.main' }}>
                 <AccountCircleIcon />
               </Avatar>
-              Profile
+              {t('profile.title')}
             </MenuItem>
 
             {canManageUsers && (
@@ -294,7 +307,10 @@ const AppLayout = ({ children }) => {
 
       <Box
         component="nav"
-        sx={{ width: { sm: sidebarOpen ? drawerWidth : 0 }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { sm: sidebarOpen ? drawerWidth : 0 }, 
+          flexShrink: { sm: 0 }
+        }}
       >
         <Drawer
           variant="temporary"

@@ -112,6 +112,13 @@ src/pages/
 ├── Auth/
 │   ├── LoginPage.jsx
 │   └── index.jsx
+├── Settings/
+│   ├── index.jsx
+│   ├── Settings.jsx
+│   ├── LanguageSettings.jsx
+│   ├── ThemeSettings.jsx
+│   ├── RegionalSettings.jsx
+│   └── LanguageSelector.jsx
 └── Reports/
     ├── index.jsx
     ├── ReportsChart.jsx
@@ -133,11 +140,6 @@ src/components/
 │   ├── LoginForm.jsx
 │   ├── UserProfile.jsx
 │   └── ProtectedRoute.jsx
-    └──  UserManagement.jsx
-
-
-
-
 ├── forms/
 │   ├── LeadForm.jsx
 │   ├── StatusForm.jsx
