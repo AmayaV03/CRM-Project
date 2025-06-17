@@ -31,10 +31,10 @@ import {
   SupervisorAccount as SupervisorAccountIcon,
   AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.js';
+import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.jsx';
 import useAuth from '../../hooks/useAuth';
 import UserProfile from '../auth/UserProfile';
 
@@ -67,6 +67,7 @@ const AppLayout = ({ children }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const sidebarOpen = useSelector(selectSidebarOpen);
   const { user, logout, isAdmin, canManageUsers, canViewReports } = useAuth();
 
@@ -74,7 +75,7 @@ const AppLayout = ({ children }) => {
   const [showUserProfile, setShowUserProfile] = useState(false);
 
   const handleDrawerToggle = () => {
-    // dispatch(toggleSidebar());
+    dispatch(toggleSidebar());
   };
 
   const handleUserMenuClick = (event) => {
