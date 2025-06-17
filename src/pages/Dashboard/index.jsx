@@ -28,7 +28,7 @@ import PieChart from '../../components/charts/PieChart';
 import BarChart from '../../components/charts/BarChart';
 import { exportDashboardData } from '../../services/reportService';
 import { hasPermission } from '../../services/authService';
-import AdminTools from '../../components/admin/AdminTools';
+import { enqueueSnackbar } from '../../services/notificationService';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -39,86 +39,98 @@ const Dashboard = () => {
   // Show export button only for authorized roles
   const showExportButton = hasPermission(roles, 'export_data');
 
-  // Mock data now inside component where theme is available
-  const mockData = {
-    metrics: [
-      {
-        title: 'Total Leads',
-        value: 142,
-        icon: '👥',
-        color: theme.palette.primary.main,
-        bgColor: `${theme.palette.primary.main}15`
-      },
-      {
-        title: 'Converted',
-        value: 42,
-        icon: '✅', 
-        color: theme.palette.success.main,
-        bgColor: `${theme.palette.success.main}15`
-      },
-      {
-        title: 'Pending',
-        value: 68,
-        icon: '⏳',
-        color: theme.palette.warning.main,
-        bgColor: `${theme.palette.warning.main}15`
-      },
-      {
-        title: 'Lost',
-        value: 32,
-        icon: '❌',
-        color: theme.palette.error.main,
-        bgColor: `${theme.palette.error.main}15`
-      }
-    ],
-    leadDistribution: [
-      { name: 'Web', value: 65 },
-      { name: 'Referral', value: 32 },
-      { name: 'Event', value: 28 },
-      { name: 'Other', value: 17 }
-    ],
-    statusAnalysis: [
-      { name: 'New', value: 42 },
-      { name: 'Contacted', value: 38 },
-      { name: 'Qualified', value: 27 },
-      { name: 'Proposal', value: 15 },
-      { name: 'Closed', value: 20 }
-    ]
+  // Process leads data for charts
+  const processLeadsData = () => {
+    const leadSources = {};
+    const leadStatuses = {};
+    
+    leads.forEach(lead => {
+      // Count lead sources
+      leadSources[lead.source] = (leadSources[lead.source] || 0) + 1;
+      
+      // Count lead statuses
+      leadStatuses[lead.status] = (leadStatuses[lead.status] || 0) + 1;
+    });
+    
+    return {
+      leadDistribution: Object.entries(leadSources).map(([name, value]) => ({ name, value })),
+      statusAnalysis: Object.entries(leadStatuses).map(([name, value]) => ({ name, value })),
+      totalLeads: leads.length,
+      converted: leads.filter(lead => lead.status === 'Converted').length,
+      pending: leads.filter(lead => lead.status !== 'Converted' && lead.status !== 'Lost').length,
+      lost: leads.filter(lead => lead.status === 'Lost').length
+    };
   };
-
+  
+  const leadsData = processLeadsData();
+  
   const metricCards = [
     {
       title: t('dashboard.metrics.totalLeads'),
-      value: leads.length,
+      value: leadsData.totalLeads,
       icon: <People />,
       color: theme.palette.primary.main,
       bgColor: `${theme.palette.primary.main}15`,
     },
     {
       title: t('dashboard.metrics.newThisWeek'),
-      value: 0,
+      value: 0, // TODO: Implement new this week calculation
       icon: <Schedule />,
       color: theme.palette.secondary.main,
       bgColor: `${theme.palette.secondary.main}15`,
     },
     {
       title: t('dashboard.metrics.converted'),
-      value: 0,
+      value: leadsData.converted,
       icon: <CheckCircle />,
       color: theme.palette.success.main,
       bgColor: `${theme.palette.success.main}15`,
     },
     {
       title: t('dashboard.metrics.lost'),
-      value: 0,
+      value: leadsData.lost,
       icon: <Cancel />,
       color: theme.palette.error.main,
       bgColor: `${theme.palette.error.main}15`,
-    },
+    }
   ];
 
-  const handleExport = () => {
-    exportDashboardData(mockData);
+  const handleExport = async () => {
+    try {
+      const metrics = [
+        {
+          title: 'TotalLeads',
+          value: leadsData.totalLeads
+        },
+        {
+          title: 'NewThisWeek',
+          value: leadsData.newThisWeek
+        },
+        {
+          title: 'Converted',
+          value: leadsData.converted
+        },
+        {
+          title: 'Lost',
+          value: leadsData.lost
+        }
+      ];
+      
+      await exportDashboardData({
+        metrics,
+        leadDistribution: leadsData.leadDistribution,
+        statusAnalysis: leadsData.statusAnalysis,
+        totalLeads: leadsData.totalLeads,
+        converted: leadsData.converted,
+        pending: leadsData.pending,
+        lost: leadsData.lost,
+        conversionRate: leadsData.conversionRate
+      });
+      
+      enqueueSnackbar('Report exported successfully', { variant: 'success' });
+    } catch (error) {
+      enqueueSnackbar('Export failed: ' + error.message, { variant: 'error' });
+    }
   };
 
   return (
@@ -159,7 +171,7 @@ const Dashboard = () => {
       {/* Metrics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {metricCards.map((card, index) => (
-          <Grid key={index} xs={12} sm={6} md={3}>
+          <Grid key={index} item xs={12} sm={6} lg={3} sx={{ minWidth: '280px' }}>
             <Card sx={{ 
               display: 'flex',
               flexDirection: 'column',
@@ -209,14 +221,14 @@ const Dashboard = () => {
         boxShadow: theme.shadows[1]
       }}>
         <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
-          <Grid xs={12} lg={6}>
+          <Grid item xs={12} lg={6}>
             <Box sx={{ 
               height: '400px',
               width: '100%',
               minWidth: '500px'
             }}>
               <PieChart 
-                data={mockData.leadDistribution}
+                data={leadsData.leadDistribution}
                 colors={[
                   theme.palette.primary.main,
                   theme.palette.secondary.main,
@@ -227,7 +239,7 @@ const Dashboard = () => {
               />
             </Box>
           </Grid>
-          <Grid xs={12} lg={6}>
+          <Grid item xs={12} lg={6}>
             <Box sx={{
               height: '400px',
               width: '100%',
@@ -237,7 +249,7 @@ const Dashboard = () => {
               justifyContent: 'center'
             }}>
               <BarChart
-                data={mockData.statusAnalysis}
+                data={leadsData.statusAnalysis}
                 bars={[{
                   dataKey: 'value',
                   color: theme.palette.primary.main,
@@ -251,89 +263,36 @@ const Dashboard = () => {
       </Paper>
 
       {/* Analytics Section */}
-      <DashboardMetrics metrics={mockData.metrics} />
-
-      {/* Welcome Section */}
-      <Paper 
-        sx={{ 
-          p: 4, 
-          borderRadius: 3,
-          background: `linear-gradient(135deg, ${theme.palette.primary.main}10 0%, ${theme.palette.secondary.main}10 100%)`,
-          border: `1px solid ${theme.palette.primary.main}20`,
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Avatar
-            sx={{
-              bgcolor: theme.palette.primary.main,
-              mr: 2,
-              width: 56,
-              height: 56,
-            }}
-          >
-            <Business sx={{ fontSize: '2rem' }} />
-          </Avatar>
-          <Box>
-            <Typography 
-              variant="h5" 
-              gutterBottom
-              sx={{
-                fontWeight: 600,
-                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              {t('dashboard.welcome.title')}
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-              {t('dashboard.welcome.description')}
-            </Typography>
-          </Box>
-        </Box>
-        
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Chip
-            label={t('dashboard.welcome.getStarted')}
-            sx={{
-              bgcolor: theme.palette.primary.main,
-              color: 'white',
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: theme.palette.primary.dark,
-              }
-            }}
-          />
-          <Chip
-            label={t('dashboard.welcome.viewAnalytics')}
-            variant="outlined"
-            sx={{
-              borderColor: theme.palette.primary.main,
-              color: theme.palette.primary.main,
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: `${theme.palette.primary.main}10`,
-              }
-            }}
-          />
-          <Chip
-            label="⚙️ Settings"
-            variant="outlined"
-            sx={{
-              borderColor: theme.palette.secondary.main,
-              color: theme.palette.secondary.main,
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: `${theme.palette.secondary.main}10`,
-              }
-            }}
-          />
-        </Box>
-      </Paper>
-      {hasPermission(roles, 'manage_users') && (
-        <AdminTools />
-      )}
+      <DashboardMetrics metrics={[
+        {
+          title: 'Total Leads',
+          value: leadsData.totalLeads,
+          icon: '👥',
+          color: theme.palette.primary.main,
+          bgColor: `${theme.palette.primary.main}15`
+        },
+        {
+          title: 'Converted',
+          value: leadsData.converted,
+          icon: '✅', 
+          color: theme.palette.success.main,
+          bgColor: `${theme.palette.success.main}15`
+        },
+        {
+          title: 'Pending',
+          value: leadsData.pending,
+          icon: '⏳',
+          color: theme.palette.warning.main,
+          bgColor: `${theme.palette.warning.main}15`
+        },
+        {
+          title: 'Lost',
+          value: leadsData.lost,
+          icon: '❌',
+          color: theme.palette.error.main,
+          bgColor: `${theme.palette.error.main}15`
+        }
+      ]} />
     </Box>
   );
 };
