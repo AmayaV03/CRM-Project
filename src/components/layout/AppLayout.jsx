@@ -76,6 +76,8 @@ const AppLayout = ({ children }) => {
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
 
+  const dispatch = useDispatch();
+
   const handleDrawerToggle = () => {
     dispatch(toggleSidebar());
   };
@@ -141,6 +143,14 @@ const AppLayout = ({ children }) => {
         <Typography variant="h6" noWrap component="div">
           LeadOrbit
         </Typography>
+        <IconButton
+          color="inherit"
+          aria-label="toggle drawer"
+          onClick={handleDrawerToggle}
+          sx={{ ml: 'auto' }}
+        >
+          <MenuIcon />
+        </IconButton>
       </Toolbar>
       <Divider />
       <List>
@@ -240,54 +250,19 @@ const AppLayout = ({ children }) => {
           display: 'flex',
           justifyContent: 'space-between'
         }}>
-          <Typography 
-            variant="h6" 
-            noWrap 
-            component="div" 
-            sx={{ 
-              color: '#ffffff',
-              order: 0
-            }}
+
+          <IconButton
+            color="inherit"
+            aria-label="toggle drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: sidebarOpen ? 'none' : 'block' } }}
           >
-            {i18n.language === 'ar' ? 'ليد أوربيت' : 'LeadOrbit'}
-          </Typography>
-          
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 2,
-            order: 1
-          }}>
-            <Button
-              variant="outlined"
-              startIcon={<LanguageIcon />}
-              onClick={handleLanguageClick}
-              sx={{
-                color: 'white',
-                borderColor: 'white',
-                '&:hover': {
-                  borderColor: 'white',
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                }
-              }}
-            >
-              {i18n.language === 'en' ? 'English' : 'العربية'}
-            </Button>
+            <MenuIcon />
+          </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', justifyContent: 'flex-end' }}>
 
-            <Menu
-              anchorEl={languageMenuAnchor}
-              open={Boolean(languageMenuAnchor)}
-              onClose={handleLanguageClose}
-              onClick={handleLanguageClose}
-            >
-              <MenuItem onClick={() => changeLanguage('en')} selected={i18n.language === 'en'}>
-                English
-              </MenuItem>
-              <MenuItem onClick={() => changeLanguage('ar')} selected={i18n.language === 'ar'}>
-                العربية
-              </MenuItem>
-            </Menu>
-
+         
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Chip
                 label={roleInfo.label}

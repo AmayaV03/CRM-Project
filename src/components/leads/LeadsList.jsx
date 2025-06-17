@@ -122,6 +122,10 @@ const StyledTable = styled(Table)(({ theme }) => ({
     borderCollapse: 'separate',
     borderSpacing: '0 8px',
   },
+  [theme.breakpoints.down('sm')]: {
+    minWidth: '100%',
+    overflowX: 'auto',
+  },
 }));
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -376,7 +380,20 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
             {error.message || 'Failed to load leads'}
           </Alert>
         ) : (
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} sx={{
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+              height: 6,
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'rgba(0, 0, 0, 0.1)',
+              borderRadius: 2,
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: 2,
+            },
+          }}>
             <Table>
               <TableHead>
                 <TableRow>
