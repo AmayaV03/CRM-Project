@@ -31,7 +31,7 @@ import {
   SupervisorAccount as SupervisorAccountIcon,
   AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.jsx';
@@ -73,8 +73,10 @@ const AppLayout = ({ children }) => {
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
 
+  const dispatch = useDispatch();
+
   const handleDrawerToggle = () => {
-    // dispatch(toggleSidebar());
+    dispatch(toggleSidebar());
   };
 
   const handleUserMenuClick = (event) => {
@@ -124,6 +126,14 @@ const AppLayout = ({ children }) => {
         <Typography variant="h6" noWrap component="div">
           LeadOrbit
         </Typography>
+        <IconButton
+          color="inherit"
+          aria-label="toggle drawer"
+          onClick={handleDrawerToggle}
+          sx={{ ml: 'auto' }}
+        >
+          <MenuIcon />
+        </IconButton>
       </Toolbar>
       <Divider />
       <List>
@@ -207,6 +217,15 @@ const AppLayout = ({ children }) => {
           background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
           borderRadius: 0
         }}>
+          <IconButton
+            color="inherit"
+            aria-label="toggle drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: sidebarOpen ? 'none' : 'block' } }}
+          >
+            <MenuIcon />
+          </IconButton>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', justifyContent: 'flex-end' }}>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Chip
