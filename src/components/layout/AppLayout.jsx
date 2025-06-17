@@ -17,7 +17,6 @@ import {
   Menu,
   MenuItem,
   Chip,
-  Dialog,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -35,23 +34,24 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice';
+import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.js';
 import useAuth from '../../hooks/useAuth';
 import UserProfile from '../auth/UserProfile';
-import LanguageSelector from '../../pages/Settings/LanguageSelector';
 
 const drawerWidth = 240;
 
-const getNavigation = (isAdmin) => {
+const getNavigation = (isAdmin, canViewReports) => {
   const baseNavigation = [
     { name: 'nav.dashboard', path: '/dashboard', icon: DashboardIcon },
     { name: 'nav.leads', path: '/leads', icon: PeopleIcon },
     { name: 'nav.kanban', path: '/kanban', icon: KanbanIcon },
-    { name: 'nav.reports', path: '/reports', icon: ReportsIcon },
     { name: 'nav.settings', path: '/settings', icon: SettingsIcon },
   ];
 
-  // Add admin route for admin users
+  if (canViewReports) {
+    baseNavigation.splice(3, 0, { name: 'nav.reports', path: '/reports', icon: ReportsIcon });
+  }
+
   if (isAdmin) {
     baseNavigation.push({
       name: 'nav.admin',
@@ -64,18 +64,17 @@ const getNavigation = (isAdmin) => {
 };
 
 const AppLayout = ({ children }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const sidebarOpen = useSelector(selectSidebarOpen);
-  const { user, logout, isAdmin, canManageUsers } = useAuth();
-  
-  // Local state
+  const { user, logout, isAdmin, canManageUsers, canViewReports } = useAuth();
+
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
 
   const handleDrawerToggle = () => {
-    // dispatch(toggleSidebar()); // This will be implemented by Member 5
+    // dispatch(toggleSidebar());
   };
 
   const handleUserMenuClick = (event) => {
@@ -100,10 +99,9 @@ const AppLayout = ({ children }) => {
     handleUserMenuClose();
   };
 
-  // Get role display info
   const getRoleInfo = () => {
     if (!user?.roles) return { label: 'User', color: 'default' };
-    
+
     if (user.roles.includes('admin')) {
       return { label: 'Admin', color: 'error' };
     }
@@ -113,12 +111,12 @@ const AppLayout = ({ children }) => {
     if (user.roles.includes('salesperson')) {
       return { label: 'Sales Rep', color: 'info' };
     }
-    
+
     return { label: 'User', color: 'default' };
   };
 
   const roleInfo = getRoleInfo();
-  const navigation = getNavigation(isAdmin);
+  const navigation = getNavigation(isAdmin, canViewReports);
 
   const drawer = (
     <div>
@@ -132,15 +130,32 @@ const AppLayout = ({ children }) => {
         {navigation.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          
+
           return (
             <ListItem key={item.name} disablePadding>
               <ListItemButton
                 selected={isActive}
                 onClick={() => navigate(item.path)}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    },
+                    '& .MuiListItemIcon-root': {
+                      color: 'white',
+                    },
+                    '& .MuiListItemText-root': {
+                      color: 'white',
+                    }
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  }
+                }}
               >
                 <ListItemIcon>
-                  <Icon color={isActive ? 'primary' : 'inherit'} />
+                  <Icon color={isActive ? 'inherit' : 'inherit'} />
                 </ListItemIcon>
                 <ListItemText primary={t(item.name)} />
               </ListItemButton>
@@ -148,14 +163,21 @@ const AppLayout = ({ children }) => {
           );
         })}
       </List>
-      <Divider />
+      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout}>
+          <ListItemButton 
+            onClick={handleLogout}
+            sx={{
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              }
+            }}
+          >
             <ListItemIcon>
-              <LogoutIcon />
+              <LogoutIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary={t('nav.logout')} />
+            <ListItemText primary={t('nav.logout')} sx={{ color: 'white' }} />
           </ListItemButton>
         </ListItem>
       </List>
@@ -163,18 +185,28 @@ const AppLayout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ 
+      display: 'flex', 
+      height: '100vh', 
+      overflow: 'hidden',
+      background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
+      backgroundAttachment: 'fixed'
+    }}>
       <AppBar
         position="fixed"
         sx={{
           width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
-          ml: i18n.language === 'ar' ? 0 : { sm: sidebarOpen ? `${drawerWidth}px` : 0 },
-          mr: i18n.language === 'ar' ? { sm: sidebarOpen ? `${drawerWidth}px` : 0 } : 0,
-          left: i18n.language === 'ar' ? 'auto' : 0,
-          right: i18n.language === 'ar' ? 0 : 'auto'
+          ml: { sm: sidebarOpen ? `${drawerWidth}px` : 0 },
+          background: 'linear-gradient(145deg,#FF6B35 0%, #F7931E50 100%)',
+          color: '#FF6B35',
+          boxShadow: 1,
+          borderRadius: 0
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ 
+          background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
+          borderRadius: 0
+        }}>
           <IconButton
             color="inherit"
             aria-label="toggle drawer"
@@ -188,38 +220,28 @@ const AppLayout = ({ children }) => {
             LeadOrbit
           </Typography>
           
-          {/* Language Selector */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <LanguageSelector />
-          </Box>
-          
-          {/* User Info and Menu */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Chip
                 label={roleInfo.label}
-                color={roleInfo.color}
+                color="default"
                 size="small"
                 variant="outlined"
-                sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.5)' }}
+                sx={{ color: '#FF6B35', borderColor: '#FF6B35' }}
               />
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                {user?.name}
-              </Typography>
             </Box>
-            
+
             <IconButton
               color="inherit"
               onClick={handleUserMenuClick}
               sx={{ p: 0 }}
             >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 255, 255, 0.2)' }}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 107, 53, 0.1)', color: '#FF6B35' }}>
                 {user?.name?.charAt(0)?.toUpperCase() || <PersonIcon />}
               </Avatar>
             </IconButton>
           </Box>
 
-          {/* User Menu */}
           <Menu
             anchorEl={userMenuAnchor}
             open={Boolean(userMenuAnchor)}
@@ -261,7 +283,7 @@ const AppLayout = ({ children }) => {
               </Avatar>
               {t('profile.title')}
             </MenuItem>
-            
+
             {canManageUsers && (
               <MenuItem onClick={() => navigate('/admin')}>
                 <Avatar sx={{ bgcolor: 'secondary.main' }}>
@@ -270,9 +292,9 @@ const AppLayout = ({ children }) => {
                 Admin Panel
               </MenuItem>
             )}
-            
+
             <Divider />
-            
+
             <MenuItem onClick={handleLogout}>
               <Avatar sx={{ bgcolor: 'error.main' }}>
                 <LogoutIcon />
@@ -282,7 +304,7 @@ const AppLayout = ({ children }) => {
           </Menu>
         </Toolbar>
       </AppBar>
-      
+
       <Box
         component="nav"
         sx={{ 
@@ -294,14 +316,15 @@ const AppLayout = ({ children }) => {
           variant="temporary"
           open={sidebarOpen}
           onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
+          ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { 
-              boxSizing: 'border-box', 
-              width: drawerWidth
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+              background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+              color: 'white',
+              borderRadius: 0
             },
           }}
         >
@@ -309,21 +332,22 @@ const AppLayout = ({ children }) => {
         </Drawer>
         <Drawer
           variant="persistent"
+          open={sidebarOpen}
           sx={{
             display: { xs: 'none', sm: sidebarOpen ? 'block' : 'none' },
-            '& .MuiDrawer-paper': { 
-              boxSizing: 'border-box', 
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
-              right: i18n.language === 'ar' ? 0 : 'auto',
-              left: i18n.language === 'ar' ? 'auto' : 0
+              background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+              color: 'white',
+              borderRadius: 0
             },
           }}
-          open={sidebarOpen}
         >
           {drawer}
         </Drawer>
       </Box>
-      
+
       <Box
         component="main"
         sx={{
@@ -342,7 +366,6 @@ const AppLayout = ({ children }) => {
         </Box>
       </Box>
 
-      {/* User Profile Dialog */}
       <UserProfile
         open={showUserProfile}
         onClose={() => setShowUserProfile(false)}
@@ -351,4 +374,4 @@ const AppLayout = ({ children }) => {
   );
 };
 
-export default AppLayout; 
+export default AppLayout;
