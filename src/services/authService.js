@@ -62,6 +62,37 @@ class AuthService {
     ];
   }
 
+  // Role to permissions mapping function
+  getRolePermissions(roles) {
+    if (!roles || !Array.isArray(roles)) return [];
+    
+    let permissions = new Set();
+    
+    roles.forEach(role => {
+      switch (role) {
+        case 'admin':
+          permissions.add('manage_leads');
+          permissions.add('manage_users');
+          permissions.add('view_reports');
+          permissions.add('reassign_leads');
+          break;
+        case 'sales_manager':
+          permissions.add('manage_leads');
+          permissions.add('view_reports');
+          permissions.add('reassign_leads');
+          break;
+        case 'salesperson':
+          permissions.add('manage_leads');
+          break;
+        default:
+          // No permissions for unknown roles
+          break;
+      }
+    });
+    
+    return Array.from(permissions);
+  }
+
   // Generate mock JWT token
   generateToken(user) {
     const payload = {
@@ -110,13 +141,44 @@ class AuthService {
   async authenticate(email, password) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const user = this.users.find(u => 
+        // Check hardcoded users first
+        let user = this.users.find(u => 
           u.email === email && 
           u.password === password && 
           u.active
         );
+        
+        // If not found in hardcoded users, check localStorage users
+        if (!user) {
+          const localUsers = this.getUsersFromStorage();
+          if (localUsers && localUsers.length > 0) {
+            user = localUsers.find(u => 
+              u.email === email && 
+              u.status === 'active'
+            );
+            
+            if (user) {
+              // Check admin-set password first (priority)
+              const adminPasswords = this.getAdminPasswordsFromStorage();
+              const adminPassword = adminPasswords[user.id];
+              
+              if (adminPassword && adminPassword.password === password) {
+                // Admin password match - proceed with authentication
+              } else if (user.password === password) {
+                // User password match - proceed with authentication
+              } else {
+                user = null; // Invalid password
+              }
+            }
+          }
+        }
 
         if (user) {
+          // Ensure user has permissions based on roles
+          if (!user.permissions || user.permissions.length === 0) {
+            user.permissions = this.getRolePermissions(user.roles);
+          }
+          
           const token = this.generateToken(user);
           const refreshToken = this.generateRefreshToken(user);
           
@@ -298,6 +360,28 @@ class AuthService {
     });
   }
 
+  // Get users from localStorage
+  getUsersFromStorage() {
+    try {
+      const storedUsers = localStorage.getItem('crm_users');
+      return storedUsers ? JSON.parse(storedUsers) : [];
+    } catch (error) {
+      console.error('Error loading users from localStorage:', error);
+      return [];
+    }
+  }
+
+  // Get admin-set passwords from localStorage
+  getAdminPasswordsFromStorage() {
+    try {
+      const storedPasswords = localStorage.getItem('crm_user_passwords');
+      return storedPasswords ? JSON.parse(storedPasswords) : {};
+    } catch (error) {
+      console.error('Error loading admin passwords from localStorage:', error);
+      return {};
+    }
+  }
+
   // Create new user (admin only)
   async createUser(userData) {
     return new Promise((resolve, reject) => {
@@ -312,6 +396,7 @@ class AuthService {
         const newUser = {
           id: `user-${Date.now()}`,
           ...userData,
+          permissions: this.getRolePermissions(userData.roles), // Assign permissions based on roles
           active: true,
           avatar: null,
           createdAt: new Date().toISOString(),
