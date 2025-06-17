@@ -76,8 +76,6 @@ const AppLayout = ({ children }) => {
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
 
-  const dispatch = useDispatch();
-
   const handleDrawerToggle = () => {
     dispatch(toggleSidebar());
   };
