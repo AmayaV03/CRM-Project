@@ -28,6 +28,7 @@ import PieChart from '../../components/charts/PieChart';
 import BarChart from '../../components/charts/BarChart';
 import { exportDashboardData } from '../../services/reportService';
 import { hasPermission } from '../../services/authService';
+import AdminTools from '../../components/admin/AdminTools';
 
 const Dashboard = () => {
   const { t } = useTranslation();
