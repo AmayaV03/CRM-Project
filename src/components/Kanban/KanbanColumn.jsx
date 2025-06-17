@@ -39,7 +39,7 @@ const KanbanColumn = ({ column, leads, onLeadClick, hideHeader = false }) => {
   return (
     <Box sx={{ minWidth: 300, margin: 1 }}>
       <Paper elevation={0} sx={{ p: 2, backgroundColor: 'transparent' }}>
-        <Box sx={{ textAlign: 'center', mb: 2 }}>
+        <Box sx={{ textAlign: 'center', mb: 2 , }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             {column.title}
           </Typography>

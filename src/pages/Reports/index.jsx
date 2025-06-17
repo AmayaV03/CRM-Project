@@ -1,44 +1,47 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Reports = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="reports-page">
       <div className="page-header">
-        <h1>Reports</h1>
-        <p>View and analyze your lead data with comprehensive reports</p>
+        <h1>{t('reports.title')}</h1>
+        <p>{t('reports.overview')}</p>
       </div>
       
       <div className="reports-content">
         <div className="reports-grid">
           <div className="report-card">
-            <h3>Lead Performance</h3>
-            <p>Track lead conversion rates and performance metrics</p>
+            <h3>{t('reports.performance')}</h3>
+            <p>{t('reports.charts.ownerPerformance')}</p>
             <div className="report-placeholder">
-              Report content coming soon...
+              {t('reports.noData')}
             </div>
           </div>
           
           <div className="report-card">
-            <h3>Sales Analytics</h3>
-            <p>Analyze sales trends and revenue data</p>
+            <h3>{t('reports.sources')}</h3>
+            <p>{t('reports.charts.sourcePerformance')}</p>
             <div className="report-placeholder">
-              Report content coming soon...
+              {t('reports.noData')}
             </div>
           </div>
           
           <div className="report-card">
-            <h3>Activity Summary</h3>
-            <p>Overview of team activities and engagement</p>
+            <h3>{t('reports.conversion')}</h3>
+            <p>{t('reports.charts.conversionRate')}</p>
             <div className="report-placeholder">
-              Report content coming soon...
+              {t('reports.noData')}
             </div>
           </div>
           
           <div className="report-card">
-            <h3>Pipeline Analysis</h3>
-            <p>Detailed analysis of your sales pipeline</p>
+            <h3>{t('reports.charts.leadsOverTime')}</h3>
+            <p>{t('reports.overview')}</p>
             <div className="report-placeholder">
-              Report content coming soon...
+              {t('reports.noData')}
             </div>
           </div>
         </div>

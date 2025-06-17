@@ -261,7 +261,7 @@ const LoginForm = () => {
           minHeight: isMobile ? '300px' : '100vh',
           background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FF8C42 100%)',
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
           overflow: 'hidden',
@@ -281,14 +281,13 @@ const LoginForm = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'flex-start',
-            mt: isMobile ? 1 : 2,
+            justifyContent: 'center',
             px: isMobile ? 2 : 3,
             boxSizing: 'border-box',
           }}
         >
           <Fade in={true} timeout={800}>
-            <Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Avatar
                 sx={{
                   mx: 'auto',
@@ -312,7 +311,8 @@ const LoginForm = () => {
                 gutterBottom
                 sx={{ 
                   textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                  mb: isMobile ? 1 : 2
+                  mb: isMobile ? 1 : 2,
+                  textAlign: 'center'
                 }}
               >
                 Welcome Back
@@ -325,6 +325,7 @@ const LoginForm = () => {
                 gutterBottom
                 sx={{ 
                   mb: isMobile ? 2 : 3,
+                  textAlign: 'center'
                 }}
               >
                 LeadOrbit
@@ -343,6 +344,7 @@ const LoginForm = () => {
                   wordBreak: 'break-word',
                   overflowWrap: 'break-word',
                   whiteSpace: 'normal',
+                  maxWidth: '600px'
                 }}
               >
                 Transform your sales journey with intelligent lead management and accelerate your business growth.
@@ -377,272 +379,275 @@ const LoginForm = () => {
             boxShadow: '0 20px 50px rgba(255, 107, 53, 0.15)',
             border: '1px solid rgba(255, 107, 53, 0.1)',
             my: isMobile ? 2 : 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
           }}
         >
-            {/* Header */}
-            <Box sx={{ textAlign: 'center', mb: 4, width: '100%' }}>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                mb: 3
-              }}>
-                <Typography 
-                  variant="h5" 
-                  component="h2" 
-                  fontWeight="bold" 
-                  color="text.primary"
-                  sx={{ 
-                    flex: 1, 
-                    textAlign: 'left',
-                    background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
-                  Login to Your Account
-                </Typography>
-                <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                  <LanguageIcon />
-                </IconButton>
-              </Box>
-            </Box>
-
-            {/* Role Information */}
-            <Box sx={{ mb: 4, width: '100%' }}>
-              <Tabs
-                value={selectedRole}
-                onChange={handleRoleSelect}
-                variant="fullWidth"
-                centered
-                sx={{
-                  mb: 0,
-                  '& .MuiTab-root': {
-                    minHeight: 48,
-                    textTransform: 'none',
-                    fontSize: '0.75rem',
-                    fontWeight: 500,
-                    color: 'text.secondary',
-                    '&.Mui-selected': {
-                      color: '#FF6B35',
-                    },
-                  },
-                  '& .MuiTabs-indicator': {
-                    background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
-                    height: 3,
-                    borderRadius: '3px 3px 0 0',
-                  },
+          {/* Header */}
+          <Box sx={{ textAlign: 'center', mb: 4, width: '100%' }}>
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              mb: 3,
+              position: 'relative'
+            }}>
+              <Typography 
+                variant="h5" 
+                component="h2" 
+                fontWeight="bold" 
+                color="text.primary"
+                sx={{ 
+                  textAlign: 'center',
+                  background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
                 }}
               >
-                {demoAccounts.map((account, index) => (
-                  <Tab
-                    key={index}
-                    icon={account.icon}
-                    label={account.role}
-                    iconPosition="top"
-                    sx={{
-                      '& .MuiSvgIcon-root': {
-                        fontSize: '1.2rem',
-                        mb: 0.5,
-                      },
-                    }}
-                  />
-                ))}
-              </Tabs>
+                Login to Your Account
+              </Typography>
+              <IconButton 
+                size="small" 
+                sx={{ 
+                  color: 'text.secondary',
+                  position: 'absolute',
+                  right: 0
+                }}
+              >
+                <LanguageIcon />
+              </IconButton>
             </Box>
+          </Box>
 
-            {/* Error Alert */}
-            {error && (
-              <Fade in={Boolean(error)}>
-                <Alert severity="error" sx={{ mb: 3 }}>
-                  {error}
-                </Alert>
-              </Fade>
-            )}
-
-            {/* Login Form */}
-            <Box 
-              component="form" 
-              onSubmit={handleSubmit(onSubmit)}
-              sx={{ 
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2.5,
+          {/* Role Information */}
+          <Box sx={{ mb: 4, width: '100%' }}>
+            <Tabs
+              value={selectedRole}
+              onChange={handleRoleSelect}
+              variant="fullWidth"
+              centered
+              sx={{
+                mb: 0,
+                '& .MuiTab-root': {
+                  minHeight: 48,
+                  textTransform: 'none',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  color: 'text.secondary',
+                  '&.Mui-selected': {
+                    color: '#FF6B35',
+                  },
+                },
+                '& .MuiTabs-indicator': {
+                  background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                  height: 3,
+                  borderRadius: '3px 3px 0 0',
+                },
               }}
             >
-              <Controller
-                name="email"
-                control={control}
-                rules={{
-                  required: t('validation.required'),
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: t('validation.email'),
-                  },
-                }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label={t('auth.email')}
-                    type="email"
-                    autoComplete="email"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#FF6B35',
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#FF6B35',
-                        },
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#FF6B35',
-                      },
-                    }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={control}
-                rules={{
-                  required: t('validation.required'),
-                  minLength: {
-                    value: 6,
-                    message: t('validation.minLength', { min: 6 }),
-                  },
-                }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label={t('auth.password')}
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#FF6B35',
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#FF6B35',
-                        },
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#FF6B35',
-                      },
-                    }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock color="action" />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={togglePasswordVisibility}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-              />
-
-              {/* Remember Me & Forgot Password */}
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                mt: 1
-              }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      size="small"
-                      sx={{
-                        '&.Mui-checked': {
-                          color: '#FF6B35',
-                        },
-                      }}
-                    />
-                  }
-                  label={
-                    <Typography variant="body2" color="text.secondary">
-                      {t('auth.rememberMe')}
-                    </Typography>
-                  }
+              {demoAccounts.map((account, index) => (
+                <Tab
+                  key={index}
+                  icon={account.icon}
+                  label={account.role}
+                  iconPosition="top"
+                  sx={{
+                    '& .MuiSvgIcon-root': {
+                      fontSize: '1.2rem',
+                      mb: 0.5,
+                    },
+                  }}
                 />
-                <Button 
-                  variant="text" 
-                  size="small" 
-                  sx={{ 
-                    textTransform: 'none', 
-                    fontSize: '0.875rem',
-                    color: '#FF6B35',
-                    fontWeight: 500,
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 107, 53, 0.04)',
-                    }
-                  }} 
-                  onClick={handleForgotPassword}
-                >
-                  Forgot Password?
-                </Button>
-              </Box>
+              ))}
+            </Tabs>
+          </Box>
 
-              {/* Login Button */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={loading || (!watchedValues.email || !watchedValues.password)}
-                startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
-                sx={{
-                  py: 1.5,
-                  mt: 2,
-                  background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  borderRadius: 2,
-                  fontSize: '1rem',
-                  boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+          {/* Login Form */}
+          <Box 
+            component="form" 
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{ 
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2.5,
+              alignItems: 'center'
+            }}
+          >
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: t('validation.required'),
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: t('validation.email'),
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label={t('auth.email')}
+                  type="email"
+                  autoComplete="email"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#FF6B35',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#FF6B35',
+                      },
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#FF6B35',
+                    },
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Email color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+
+            <Controller
+              name="password"
+              control={control}
+              rules={{
+                required: t('validation.required'),
+                minLength: {
+                  value: 6,
+                  message: t('validation.minLength', { min: 6 }),
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label={t('auth.password')}
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#FF6B35',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#FF6B35',
+                      },
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#FF6B35',
+                    },
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock color="action" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={togglePasswordVisibility}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+
+            {/* Remember Me & Forgot Password */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              width: '100%',
+              mt: 1
+            }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    size="small"
+                    sx={{
+                      '&.Mui-checked': {
+                        color: '#FF6B35',
+                      },
+                    }}
+                  />
+                }
+                label={
+                  <Typography variant="body2" color="text.secondary">
+                    {t('auth.rememberMe')}
+                  </Typography>
+                }
+              />
+              <Button 
+                variant="text" 
+                size="small" 
+                sx={{ 
+                  textTransform: 'none', 
+                  fontSize: '0.875rem',
+                  color: '#FF6B35',
+                  fontWeight: 500,
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #E55A2B 0%, #E0841A 100%)',
-                    transform: 'translateY(-1px)',
-                    boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
-                  },
-                  '&.Mui-disabled': {
-                    background: 'rgba(0, 0, 0, 0.12)',
-                    color: 'rgba(0, 0, 0, 0.26)',
-                  },
-                }}
+                    backgroundColor: 'rgba(255, 107, 53, 0.04)',
+                  }
+                }} 
+                onClick={handleForgotPassword}
               >
-                {loading ? t('common.loading') : t('auth.loginButton')}
+                Forgot Password?
               </Button>
             </Box>
+
+            {/* Login Button */}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              size="large"
+              disabled={loading || (!watchedValues.email || !watchedValues.password)}
+              startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
+              sx={{
+                py: 1.5,
+                mt: 2,
+                background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                fontWeight: 'bold',
+                textTransform: 'none',
+                borderRadius: 2,
+                fontSize: '1rem',
+                boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #E55A2B 0%, #E0841A 100%)',
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                },
+                '&.Mui-disabled': {
+                  background: 'rgba(0, 0, 0, 0.12)',
+                  color: 'rgba(0, 0, 0, 0.26)',
+                },
+              }}
+            >
+              {loading ? t('common.loading') : t('auth.loginButton')}
+            </Button>
+          </Box>
         </Paper>
       </Box>
     </Box>

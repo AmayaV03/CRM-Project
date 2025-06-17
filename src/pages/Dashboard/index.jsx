@@ -284,18 +284,17 @@ const Dashboard = () => {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Welcome to LeadOrbit
+              {t('dashboard.welcome.title')}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-              Your intelligent lead management system is ready to transform your sales journey. 
-              Start by adding leads, exploring features, and accelerating your business growth.
+              {t('dashboard.welcome.description')}
             </Typography>
           </Box>
         </Box>
         
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Chip
-            label="🚀 Get Started"
+            label={t('dashboard.welcome.getStarted')}
             sx={{
               bgcolor: theme.palette.primary.main,
               color: 'white',
@@ -306,7 +305,7 @@ const Dashboard = () => {
             }}
           />
           <Chip
-            label="📊 View Analytics"
+            label={t('dashboard.welcome.viewAnalytics')}
             variant="outlined"
             sx={{
               borderColor: theme.palette.primary.main,

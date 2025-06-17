@@ -1,19 +1,51 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { Box, Typography, Container, Paper, Tabs, Tab } from '@mui/material';
+import LanguageSettings from '../Settings/LanguageSettings';
+import ThemeSettings from '../settings/ThemeSettings';
+import RegionalSettings from '../Settings/RegionalSettings';
+import PreferenceSettings from './PreferenceSettings';
 
 const Settings = () => {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = React.useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        {t('settings.title')}
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Settings page coming soon...
-      </Typography>
-    </Box>
+    <Container maxWidth="lg">
+      <Box sx={{ py: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          {t('settings.title')}
+        </Typography>
+
+        <Paper sx={{ width: '100%', mt: 3 }}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{ borderBottom: 1, borderColor: 'divider' }}
+          >
+            <Tab label={t('settings.tabs.general')} />
+            <Tab label={t('settings.tabs.preferences')} />
+          </Tabs>
+
+          <Box sx={{ p: 3 }}>
+            {activeTab === 0 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <LanguageSettings />
+                <ThemeSettings />
+                <RegionalSettings />
+              </Box>
+            )}
+            {activeTab === 1 && <PreferenceSettings />}
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

@@ -17,7 +17,6 @@ import {
   Menu,
   MenuItem,
   Chip,
-  Dialog,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -31,8 +30,9 @@ import {
   AccountCircle as AccountCircleIcon,
   SupervisorAccount as SupervisorAccountIcon,
   AdminPanelSettings as AdminIcon,
+  Language as LanguageIcon,
 } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.jsx';
@@ -49,12 +49,10 @@ const getNavigation = (isAdmin, canViewReports) => {
     { name: 'nav.settings', path: '/settings', icon: SettingsIcon },
   ];
 
-  // Add reports for users who have permission to view reports (exclude salespeople)
   if (canViewReports) {
     baseNavigation.splice(3, 0, { name: 'nav.reports', path: '/reports', icon: ReportsIcon });
   }
 
-  // Add admin route for admin users
   if (isAdmin) {
     baseNavigation.push({
       name: 'nav.admin',
@@ -67,18 +65,19 @@ const getNavigation = (isAdmin, canViewReports) => {
 };
 
 const AppLayout = ({ children }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const sidebarOpen = useSelector(selectSidebarOpen);
   const { user, logout, isAdmin, canManageUsers, canViewReports } = useAuth();
-  
-  // Local state
+
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
+  const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
 
   const handleDrawerToggle = () => {
-    // dispatch(toggleSidebar()); // This will be implemented by Member 5
+    dispatch(toggleSidebar());
   };
 
   const handleUserMenuClick = (event) => {
@@ -103,12 +102,23 @@ const AppLayout = ({ children }) => {
     handleUserMenuClose();
   };
 
+  const handleLanguageClick = (event) => {
+    setLanguageMenuAnchor(event.currentTarget);
+  };
 
+  const handleLanguageClose = () => {
+    setLanguageMenuAnchor(null);
+  };
 
-  // Get role display info
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    document.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    handleLanguageClose();
+  };
+
   const getRoleInfo = () => {
     if (!user?.roles) return { label: 'User', color: 'default' };
-    
+
     if (user.roles.includes('admin')) {
       return { label: 'Admin', color: 'error' };
     }
@@ -118,7 +128,7 @@ const AppLayout = ({ children }) => {
     if (user.roles.includes('salesperson')) {
       return { label: 'Sales Rep', color: 'info' };
     }
-    
+
     return { label: 'User', color: 'default' };
   };
 
@@ -137,15 +147,32 @@ const AppLayout = ({ children }) => {
         {navigation.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          
+
           return (
             <ListItem key={item.name} disablePadding>
               <ListItemButton
                 selected={isActive}
                 onClick={() => navigate(item.path)}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    },
+                    '& .MuiListItemIcon-root': {
+                      color: 'white',
+                    },
+                    '& .MuiListItemText-root': {
+                      color: 'white',
+                    }
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  }
+                }}
               >
                 <ListItemIcon>
-                  <Icon color={isActive ? 'primary' : 'inherit'} />
+                  <Icon color={isActive ? 'inherit' : 'inherit'} />
                 </ListItemIcon>
                 <ListItemText primary={t(item.name)} />
               </ListItemButton>
@@ -153,14 +180,21 @@ const AppLayout = ({ children }) => {
           );
         })}
       </List>
-      <Divider />
+      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} />
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout}>
+          <ListItemButton 
+            onClick={handleLogout}
+            sx={{
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              }
+            }}
+          >
             <ListItemIcon>
-              <LogoutIcon />
+              <LogoutIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary={t('nav.logout')} />
+            <ListItemText primary={t('nav.logout')} sx={{ color: 'white' }} />
           </ListItemButton>
         </ListItem>
       </List>
@@ -168,55 +202,113 @@ const AppLayout = ({ children }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ 
+      display: 'flex', 
+      height: '100vh', 
+      overflow: 'hidden',
+      background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
+      backgroundAttachment: 'fixed',
+      direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
+    }}>
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
-          ml: { sm: sidebarOpen ? `${drawerWidth}px` : 0 },
+          width: { 
+            sm: sidebarOpen 
+              ? `calc(100% - ${drawerWidth}px)` 
+              : '100%' 
+          },
+          ml: { 
+            sm: i18n.language === 'ar' 
+              ? 0 
+              : (sidebarOpen ? `${drawerWidth}px` : 0) 
+          },
+          mr: { 
+            sm: i18n.language === 'ar' 
+              ? (sidebarOpen ? `${drawerWidth}px` : 0) 
+              : 0 
+          },
+          background: 'linear-gradient(145deg,#FF6B35 0%, #F7931E50 100%)',
+          color: '#FF6B35',
+          boxShadow: 1,
+          borderRadius: 0
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="toggle drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
+        <Toolbar sx={{ 
+          background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
+          borderRadius: 0,
+          display: 'flex',
+          justifyContent: 'space-between'
+        }}>
+          <Typography 
+            variant="h6" 
+            noWrap 
+            component="div" 
+            sx={{ 
+              color: '#ffffff',
+              order: 0
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            LeadOrbit
+            {i18n.language === 'ar' ? 'ليد أوربيت' : 'LeadOrbit'}
           </Typography>
           
-          {/* User Info and Menu */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 2,
+            order: 1
+          }}>
+            <Button
+              variant="outlined"
+              startIcon={<LanguageIcon />}
+              onClick={handleLanguageClick}
+              sx={{
+                color: 'white',
+                borderColor: 'white',
+                '&:hover': {
+                  borderColor: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              {i18n.language === 'en' ? 'English' : 'العربية'}
+            </Button>
+
+            <Menu
+              anchorEl={languageMenuAnchor}
+              open={Boolean(languageMenuAnchor)}
+              onClose={handleLanguageClose}
+              onClick={handleLanguageClose}
+            >
+              <MenuItem onClick={() => changeLanguage('en')} selected={i18n.language === 'en'}>
+                English
+              </MenuItem>
+              <MenuItem onClick={() => changeLanguage('ar')} selected={i18n.language === 'ar'}>
+                العربية
+              </MenuItem>
+            </Menu>
+
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Chip
                 label={roleInfo.label}
-                color={roleInfo.color}
+                color="default"
                 size="small"
                 variant="outlined"
-                sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.5)' }}
+                sx={{ color: 'white', borderColor: 'white' }}
               />
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                {user?.name}
-              </Typography>
             </Box>
-            
+
             <IconButton
               color="inherit"
               onClick={handleUserMenuClick}
               sx={{ p: 0 }}
             >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 255, 255, 0.2)' }}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 107, 53, 0.1)', color: 'white' }}>
                 {user?.name?.charAt(0)?.toUpperCase() || <PersonIcon />}
               </Avatar>
             </IconButton>
           </Box>
 
-          {/* User Menu */}
           <Menu
             anchorEl={userMenuAnchor}
             open={Boolean(userMenuAnchor)}
@@ -256,20 +348,20 @@ const AppLayout = ({ children }) => {
               <Avatar sx={{ bgcolor: 'primary.main' }}>
                 <AccountCircleIcon />
               </Avatar>
-              Profile
+              {t('profile.title')}
             </MenuItem>
-            
+
             {canManageUsers && (
               <MenuItem onClick={() => navigate('/admin')}>
                 <Avatar sx={{ bgcolor: 'secondary.main' }}>
-                  <SupervisorAccountIcon />
+                  <SupervisorAccountIcon sx={{ color: 'white' }} />
                 </Avatar>
                 Admin Panel
               </MenuItem>
             )}
-            
+
             <Divider />
-            
+
             <MenuItem onClick={handleLogout}>
               <Avatar sx={{ bgcolor: 'error.main' }}>
                 <LogoutIcon />
@@ -279,10 +371,13 @@ const AppLayout = ({ children }) => {
           </Menu>
         </Toolbar>
       </AppBar>
-      
+
       <Box
         component="nav"
-        sx={{ width: { sm: sidebarOpen ? drawerWidth : 0 }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { sm: sidebarOpen ? drawerWidth : 0 }, 
+          flexShrink: { sm: 0 }
+        }}
       >
         <Drawer
           variant="temporary"
@@ -296,34 +391,34 @@ const AppLayout = ({ children }) => {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              '&[inert]': {
-                visibility: 'hidden',
-                display: 'none',
-              }
+              background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+              color: 'white',
+              borderRadius: 0
             },
           }}
+          anchor={i18n.language === 'ar' ? 'right' : 'left'}
         >
           {drawer}
         </Drawer>
         <Drawer
-          variant="persistent"
+          variant="permanent"
           sx={{
-            display: { xs: 'none', sm: sidebarOpen ? 'block' : 'none' },
+            display: { xs: 'none', sm: 'block' },
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              '&[aria-hidden="true"]': {
-                visibility: 'hidden',
-                display: 'none',
-              }
+              background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+              color: 'white',
+              borderRadius: 0
             },
           }}
-          open={sidebarOpen}
+          open
+          anchor={i18n.language === 'ar' ? 'right' : 'left'}
         >
           {drawer}
         </Drawer>
       </Box>
-      
+
       <Box
         component="main"
         sx={{
@@ -342,15 +437,12 @@ const AppLayout = ({ children }) => {
         </Box>
       </Box>
 
-      {/* User Profile Dialog */}
       <UserProfile
         open={showUserProfile}
         onClose={() => setShowUserProfile(false)}
       />
-
-
     </Box>
   );
 };
 
-export default AppLayout; 
+export default AppLayout;
