@@ -111,6 +111,38 @@ const LoginForm = () => {
     try {
       clearAuthError();
       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
       const result = await login(data.email, data.password);
       
       // Removed localStorage functionality

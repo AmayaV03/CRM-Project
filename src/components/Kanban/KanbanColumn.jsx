@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
-import { Droppable } from 'react-beautiful-dnd';
-import { useTranslation } from 'react-i18next';
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+
 import KanbanCard from './KanbanCard';
 
 const KanbanColumn = ({ column, leads, onLeadClick, hideHeader = false }) => {
