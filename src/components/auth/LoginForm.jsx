@@ -89,13 +89,7 @@ const LoginForm = () => {
 
   // Load saved credentials if "Remember Me" was checked
   useEffect(() => {
-    const savedEmail = localStorage.getItem('leadflow_saved_email');
-    const savedRemember = localStorage.getItem('leadflow_remember_me') === 'true';
-    
-    if (savedEmail && savedRemember) {
-      setValue('email', savedEmail);
-      setRememberMe(true);
-    }
+    // Removed localStorage functionality
   }, [setValue]);
 
   // Clear error when user starts typing
@@ -151,14 +145,7 @@ const LoginForm = () => {
       
       const result = await login(data.email, data.password);
       
-      // Save email if remember me is checked
-      if (rememberMe) {
-        localStorage.setItem('leadflow_saved_email', data.email);
-        localStorage.setItem('leadflow_remember_me', 'true');
-      } else {
-        localStorage.removeItem('leadflow_saved_email');
-        localStorage.removeItem('leadflow_remember_me');
-      }
+      // Removed localStorage functionality
       
       // Navigate to dashboard after successful login
       navigate('/dashboard');
@@ -435,7 +422,7 @@ const LoginForm = () => {
                   textTransform: 'none',
                   fontSize: '0.75rem',
                   fontWeight: 500,
-                  color: 'text.secondary',
+                  color: 'rgba(0, 0, 0, 0.6)',
                   '&.Mui-selected': {
                     color: '#FF6B35',
                   },
@@ -451,12 +438,29 @@ const LoginForm = () => {
                 <Tab
                   key={index}
                   icon={account.icon}
-                  label={account.role}
+                  label={
+                    <Typography
+                      sx={{
+                        color: selectedRole === index ? '#FF6B35' : 'rgba(0, 0, 0, 0.6)',
+                        fontSize: '0.875rem',
+                        fontWeight: selectedRole === index ? 600 : 500,
+                      }}
+                    >
+                      {account.role}
+                    </Typography>
+                  }
                   iconPosition="top"
                   sx={{
                     '& .MuiSvgIcon-root': {
-                      fontSize: '1.2rem',
+                      fontSize: '1.5rem',
                       mb: 0.5,
+                      color: selectedRole === index ? '#FF6B35' : 'rgba(0, 0, 0, 0.6)',
+                    },
+                    '&.Mui-selected': {
+                      color: '#FF6B35',
+                      '& .MuiSvgIcon-root': {
+                        color: '#FF6B35',
+                      },
                     },
                   }}
                 />
@@ -492,21 +496,42 @@ const LoginForm = () => {
                   fullWidth
                   label={t('auth.email')}
                   type="email"
-                  autoComplete="email"
                   error={!!errors.email}
                   helperText={errors.email?.message}
                   sx={{
+                    width: '90%',
+                    mx: 'auto',
                     '& .MuiOutlinedInput-root': {
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                      backgroundColor: 'white',
+                      '& fieldset': {
+                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                      },
+                      '&:hover fieldset': {
                         borderColor: '#FF6B35',
                       },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      '&.Mui-focused fieldset': {
                         borderColor: '#FF6B35',
+                        borderWidth: '1px',
+                      },
+                      '& input': {
+                        color: '#000000',
+                        backgroundColor: 'white',
+                        '&:-webkit-autofill': {
+                          WebkitTextFillColor: '#000000',
+                          WebkitBoxShadow: '0 0 0 1000px white inset',
+                          transition: 'background-color 5000s ease-in-out 0s',
+                        },
                       },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#FF6B35',
+                    '& .MuiInputLabel-root': {
+                      color: 'rgba(0, 0, 0, 0.6)',
+                      '&.Mui-focused': {
+                        color: '#FF6B35',
+                      },
                     },
+                  }}
+                  inputProps={{
+                    autoComplete: 'email',
                   }}
                   InputProps={{
                     startAdornment: (
@@ -535,20 +560,33 @@ const LoginForm = () => {
                   fullWidth
                   label={t('auth.password')}
                   type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
                   error={!!errors.password}
                   helperText={errors.password?.message}
                   sx={{
+                    width: '90%',
+                    mx: 'auto',
                     '& .MuiOutlinedInput-root': {
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                      backgroundColor: 'white',
+                      '& fieldset': {
+                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                      },
+                      '&:hover fieldset': {
                         borderColor: '#FF6B35',
                       },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      '&.Mui-focused fieldset': {
                         borderColor: '#FF6B35',
+                        borderWidth: '1px',
+                      },
+                      '& input': {
+                        color: '#000000',
+                        backgroundColor: 'white',
                       },
                     },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#FF6B35',
+                    '& .MuiInputLabel-root': {
+                      color: 'rgba(0, 0, 0, 0.6)',
+                      '&.Mui-focused': {
+                        color: '#FF6B35',
+                      },
                     },
                   }}
                   InputProps={{
@@ -613,7 +651,7 @@ const LoginForm = () => {
                 }} 
                 onClick={handleForgotPassword}
               >
-                Forgot Password?
+                {t('auth.forgotPassword')}
               </Button>
             </Box>
 

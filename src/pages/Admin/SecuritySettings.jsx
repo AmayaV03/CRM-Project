@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -50,6 +51,7 @@ import {
 } from '@mui/icons-material';
 
 const SecuritySettings = () => {
+  const { t } = useTranslation();
   const [securitySettings, setSecuritySettings] = useState({
     // Password Policy
     passwordMinLength: 8,
@@ -252,10 +254,10 @@ const SecuritySettings = () => {
     <Box sx={{ p: 3 }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          Security Settings
+          {t('securitySettings.title')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Configure security policies and monitor system access
+          {t('securitySettings.description')}
         </Typography>
       </Box>
 
@@ -266,8 +268,8 @@ const SecuritySettings = () => {
           sx={{ mb: 3 }}
         >
           {saveStatus === 'success' 
-            ? 'Security settings saved successfully!' 
-            : 'Error saving security settings. Please try again.'
+            ? t('securitySettings.saveSuccess')
+            : t('securitySettings.saveError')
           }
         </Alert>
       )}
@@ -280,11 +282,11 @@ const SecuritySettings = () => {
           onClick={handleSaveSettings}
           disabled={!isModified}
         >
-          Save Security Settings
+          {t('securitySettings.saveChanges')}
         </Button>
         {isModified && (
           <Chip
-            label="Unsaved Changes"
+            label={t('securitySettings.unsavedChanges')}
             color="warning"
             size="small"
           />
@@ -297,14 +299,14 @@ const SecuritySettings = () => {
           <Card>
             <CardHeader
               avatar={<PasswordIcon />}
-              title="Password Policy"
-              subheader="Configure password requirements and security"
+              title={t('securitySettings.passwordPolicy')}
+              subheader={t('securitySettings.passwordPolicyDescription')}
             />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <Box>
                   <Typography gutterBottom>
-                    Minimum Password Length: {securitySettings.passwordMinLength}
+                    {t('securitySettings.minimumPasswordLength')}: {securitySettings.passwordMinLength}
                   </Typography>
                   <Slider
                     value={securitySettings.passwordMinLength}
@@ -324,7 +326,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('passwordRequireUppercase', e.target.checked)}
                     />
                   }
-                  label="Require Uppercase Letters"
+                  label={t('securitySettings.requireUppercaseLetters')}
                 />
 
                 <FormControlLabel
@@ -334,7 +336,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('passwordRequireLowercase', e.target.checked)}
                     />
                   }
-                  label="Require Lowercase Letters"
+                  label={t('securitySettings.requireLowercaseLetters')}
                 />
 
                 <FormControlLabel
@@ -344,7 +346,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('passwordRequireNumbers', e.target.checked)}
                     />
                   }
-                  label="Require Numbers"
+                  label={t('securitySettings.requireNumbers')}
                 />
 
                 <FormControlLabel
@@ -354,11 +356,11 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('passwordRequireSpecialChars', e.target.checked)}
                     />
                   }
-                  label="Require Special Characters"
+                  label={t('securitySettings.requireSpecialCharacters')}
                 />
 
                 <TextField
-                  label="Password Expiration (Days)"
+                  label={t('securitySettings.passwordExpirationDays')}
                   type="number"
                   value={securitySettings.passwordExpirationDays}
                   onChange={(e) => handleSettingChange('passwordExpirationDays', parseInt(e.target.value))}
@@ -366,7 +368,7 @@ const SecuritySettings = () => {
                 />
 
                 <TextField
-                  label="Password History Count"
+                  label={t('securitySettings.passwordHistoryCount')}
                   type="number"
                   value={securitySettings.passwordHistoryCount}
                   onChange={(e) => handleSettingChange('passwordHistoryCount', parseInt(e.target.value))}
@@ -375,7 +377,7 @@ const SecuritySettings = () => {
 
                 <Box sx={{ mt: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
                   <Typography variant="subtitle2" gutterBottom>
-                    Current Password Requirements:
+                    {t('securitySettings.currentPasswordRequirements')}:
                   </Typography>
                   {getPasswordStrengthInfo().map((req, index) => (
                     <Chip
@@ -397,8 +399,8 @@ const SecuritySettings = () => {
           <Card>
             <CardHeader
               avatar={<AccessTimeIcon />}
-              title="Session Management"
-              subheader="Configure session timeouts and limits"
+              title={t('securitySettings.sessionManagement')}
+              subheader={t('securitySettings.sessionManagementDescription')}
             />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -409,13 +411,13 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableSessionTimeout', e.target.checked)}
                     />
                   }
-                  label="Enable Session Timeout"
+                  label={t('securitySettings.enableSessionTimeout')}
                 />
 
                 {securitySettings.enableSessionTimeout && (
                   <Box>
                     <Typography gutterBottom>
-                      Session Timeout: {Math.floor(securitySettings.sessionTimeoutMinutes / 60)}h {securitySettings.sessionTimeoutMinutes % 60}m
+                      {t('securitySettings.sessionTimeout')}: {Math.floor(securitySettings.sessionTimeoutMinutes / 60)}h {securitySettings.sessionTimeoutMinutes % 60}m
                     </Typography>
                     <Slider
                       value={securitySettings.sessionTimeoutMinutes}
@@ -435,7 +437,7 @@ const SecuritySettings = () => {
                 )}
 
                 <TextField
-                  label="Max Concurrent Sessions"
+                  label={t('securitySettings.maxConcurrentSessions')}
                   type="number"
                   value={securitySettings.maxConcurrentSessions}
                   onChange={(e) => handleSettingChange('maxConcurrentSessions', parseInt(e.target.value))}
@@ -449,12 +451,12 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableRememberMe', e.target.checked)}
                     />
                   }
-                  label="Enable Remember Me"
+                  label={t('securitySettings.enableRememberMe')}
                 />
 
                 {securitySettings.enableRememberMe && (
                   <TextField
-                    label="Remember Me Duration (Days)"
+                    label={t('securitySettings.rememberMeDurationDays')}
                     type="number"
                     value={securitySettings.rememberMeDays}
                     onChange={(e) => handleSettingChange('rememberMeDays', parseInt(e.target.value))}
@@ -471,8 +473,8 @@ const SecuritySettings = () => {
           <Card>
             <CardHeader
               avatar={<ShieldIcon />}
-              title="Access Control"
-              subheader="Advanced security and access controls"
+              title={t('securitySettings.accessControl')}
+              subheader={t('securitySettings.accessControlDescription')}
             />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -483,13 +485,13 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableAccountLockout', e.target.checked)}
                     />
                   }
-                  label="Enable Account Lockout"
+                  label={t('securitySettings.enableAccountLockout')}
                 />
 
                 {securitySettings.enableAccountLockout && (
                   <>
                     <TextField
-                      label="Max Failed Login Attempts"
+                      label={t('securitySettings.maxFailedLoginAttempts')}
                       type="number"
                       value={securitySettings.passwordMaxAttempts}
                       onChange={(e) => handleSettingChange('passwordMaxAttempts', parseInt(e.target.value))}
@@ -497,11 +499,11 @@ const SecuritySettings = () => {
                     />
 
                     <TextField
-                      label="Lockout Duration (Minutes)"
+                      label={t('securitySettings.lockoutDurationMinutes')}
                       type="number"
                       value={securitySettings.lockoutDurationMinutes}
                       onChange={(e) => handleSettingChange('lockoutDurationMinutes', parseInt(e.target.value))}
-                      InputProps={{ inputProps: { min: 5, max: 1440 } }}
+                      InputProps={{ inputProps: { min: 15, max: 1440 } }}
                     />
                   </>
                 )}
@@ -513,7 +515,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableTwoFactor', e.target.checked)}
                     />
                   }
-                  label="Enable Two-Factor Authentication"
+                  label={t('securitySettings.enableTwoFactorAuthentication')}
                 />
 
                 <FormControlLabel
@@ -523,7 +525,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableLoginNotifications', e.target.checked)}
                     />
                   }
-                  label="Enable Login Notifications"
+                  label={t('securitySettings.enableLoginNotifications')}
                 />
 
                 <FormControlLabel
@@ -533,7 +535,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableAuditLog', e.target.checked)}
                     />
                   }
-                  label="Enable Audit Logging"
+                  label={t('securitySettings.enableAuditLogging')}
                 />
               </Box>
             </CardContent>
@@ -545,8 +547,8 @@ const SecuritySettings = () => {
           <Card>
             <CardHeader
               avatar={<LockIcon />}
-              title="Data Protection"
-              subheader="Data security and protection settings"
+              title={t('securitySettings.dataProtection')}
+              subheader={t('securitySettings.dataProtectionDescription')}
             />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -557,7 +559,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableDataEncryption', e.target.checked)}
                     />
                   }
-                  label="Enable Data Encryption"
+                  label={t('securitySettings.enableDataEncryption')}
                 />
 
                 <FormControlLabel
@@ -567,7 +569,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableSecureHeaders', e.target.checked)}
                     />
                   }
-                  label="Enable Security Headers"
+                  label={t('securitySettings.enableSecurityHeaders')}
                 />
 
                 <FormControlLabel
@@ -577,7 +579,7 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableCSRFProtection', e.target.checked)}
                     />
                   }
-                  label="Enable CSRF Protection"
+                  label={t('securitySettings.enableCSRFProtection')}
                 />
 
                 <FormControlLabel
@@ -587,12 +589,12 @@ const SecuritySettings = () => {
                       onChange={(e) => handleSettingChange('enableXSSProtection', e.target.checked)}
                     />
                   }
-                  label="Enable XSS Protection"
+                  label={t('securitySettings.enableXSSProtection')}
                 />
 
                 <Alert severity="info" sx={{ mt: 2 }}>
                   <Typography variant="body2">
-                    These security features help protect against common web vulnerabilities and ensure data integrity.
+                    {t('securitySettings.securityFeaturesInfo')}
                   </Typography>
                 </Alert>
               </Box>
@@ -605,28 +607,28 @@ const SecuritySettings = () => {
           <Card>
             <CardHeader
               avatar={<VisibilityIcon />}
-              title="Active Sessions"
-              subheader="Monitor and manage active user sessions"
+              title={t('securitySettings.activeSessions')}
+              subheader={t('securitySettings.activeSessionsDescription')}
               action={
                 <Button
                   startIcon={<RefreshIcon />}
                   onClick={loadActiveSessions}
                   size="small"
                 >
-                  Refresh
+                  {t('securitySettings.refresh')}
                 </Button>
               }
             />
             <CardContent>
               <TableContainer>
-                <Table>
+                <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>User</TableCell>
-                      <TableCell>Login Time</TableCell>
-                      <TableCell>IP Address</TableCell>
-                      <TableCell>User Agent</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell>{t('securitySettings.user')}</TableCell>
+                      <TableCell>{t('securitySettings.loginTime')}</TableCell>
+                      <TableCell>{t('securitySettings.ipAddress')}</TableCell>
+                      <TableCell>{t('securitySettings.userAgent')}</TableCell>
+                      <TableCell>{t('securitySettings.actions')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -635,7 +637,7 @@ const SecuritySettings = () => {
                         <TableCell>
                           {session.userId}
                           {session.isCurrentSession && (
-                            <Chip label="Current" size="small" color="primary" sx={{ ml: 1 }} />
+                            <Chip label={t('securitySettings.current')} size="small" color="primary" sx={{ ml: 1 }} />
                           )}
                         </TableCell>
                         <TableCell>{session.loginTime.toLocaleString()}</TableCell>
@@ -643,11 +645,11 @@ const SecuritySettings = () => {
                         <TableCell>{session.userAgent}</TableCell>
                         <TableCell>
                           {!session.isCurrentSession && (
-                            <Tooltip title="Terminate Session">
+                            <Tooltip title={t('securitySettings.terminateSession')}>
                               <IconButton
                                 size="small"
-                                color="error"
                                 onClick={() => handleTerminateSession(session.id)}
+                                color="error"
                               >
                                 <DeleteIcon />
                               </IconButton>
@@ -668,20 +670,20 @@ const SecuritySettings = () => {
           <Card>
             <CardHeader
               avatar={<WarningIcon />}
-              title="Security Audit Logs"
-              subheader="Recent security events and activities"
+              title={t('securitySettings.securityAuditLogs')}
+              subheader={t('securitySettings.securityAuditLogsDescription')}
             />
             <CardContent>
               <TableContainer>
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Timestamp</TableCell>
-                      <TableCell>Action</TableCell>
-                      <TableCell>User</TableCell>
-                      <TableCell>IP Address</TableCell>
-                      <TableCell>Details</TableCell>
-                      <TableCell>Severity</TableCell>
+                      <TableCell>{t('securitySettings.timestamp')}</TableCell>
+                      <TableCell>{t('securitySettings.action')}</TableCell>
+                      <TableCell>{t('securitySettings.user')}</TableCell>
+                      <TableCell>{t('securitySettings.ipAddress')}</TableCell>
+                      <TableCell>{t('securitySettings.details')}</TableCell>
+                      <TableCell>{t('securitySettings.severity')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

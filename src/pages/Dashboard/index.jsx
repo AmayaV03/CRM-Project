@@ -23,7 +23,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { selectAllLeads } from '../../store/slices/leadsSlice';
-import DashboardMetrics from '../../components/dashboard/DashboardMetrics';
+import MetricCard from '../../components/charts/MetricCard';
 import PieChart from '../../components/charts/PieChart';
 import BarChart from '../../components/charts/BarChart';
 import { exportDashboardData } from '../../services/reportService';
@@ -99,19 +99,19 @@ const Dashboard = () => {
     try {
       const metrics = [
         {
-          title: 'TotalLeads',
+          title: t('dashboard.metrics.totalLeads'),
           value: leadsData.totalLeads
         },
         {
-          title: 'NewThisWeek',
+          title: t('dashboard.metrics.newThisWeek'),
           value: leadsData.newThisWeek
         },
         {
-          title: 'Converted',
+          title: t('dashboard.metrics.converted'),
           value: leadsData.converted
         },
         {
-          title: 'Lost',
+          title: t('dashboard.metrics.lost'),
           value: leadsData.lost
         }
       ];
@@ -127,9 +127,9 @@ const Dashboard = () => {
         conversionRate: leadsData.conversionRate
       });
       
-      enqueueSnackbar('Report exported successfully', { variant: 'success' });
+      enqueueSnackbar(t('dashboard.messages.exportSuccess'), { variant: 'success' });
     } catch (error) {
-      enqueueSnackbar('Export failed: ' + error.message, { variant: 'error' });
+      enqueueSnackbar(t('dashboard.messages.exportFailed', { error: error.message }), { variant: 'error' });
     }
   };
 
@@ -235,7 +235,7 @@ const Dashboard = () => {
                   theme.palette.success.main,
                   theme.palette.warning.main
                 ]}
-                title="Lead Sources"
+                title={t('dashboard.leadSources')}
               />
             </Box>
           </Grid>
@@ -255,7 +255,7 @@ const Dashboard = () => {
                   color: theme.palette.primary.main,
                   label: 'Leads'
                 }]}
-                title="Lead Status"
+                title={t('dashboard.leadStatus')}
               />
             </Box>
           </Grid>
@@ -263,36 +263,44 @@ const Dashboard = () => {
       </Paper>
 
       {/* Analytics Section */}
-      <DashboardMetrics metrics={[
-        {
-          title: 'Total Leads',
-          value: leadsData.totalLeads,
-          icon: '👥',
-          color: theme.palette.primary.main,
-          bgColor: `${theme.palette.primary.main}15`
-        },
-        {
-          title: 'Converted',
-          value: leadsData.converted,
-          icon: '✅', 
-          color: theme.palette.success.main,
-          bgColor: `${theme.palette.success.main}15`
-        },
-        {
-          title: 'Pending',
-          value: leadsData.pending,
-          icon: '⏳',
-          color: theme.palette.warning.main,
-          bgColor: `${theme.palette.warning.main}15`
-        },
-        {
-          title: 'Lost',
-          value: leadsData.lost,
-          icon: '❌',
-          color: theme.palette.error.main,
-          bgColor: `${theme.palette.error.main}15`
-        }
-      ]} />
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6} lg={3}>
+          <MetricCard
+            title={t('dashboard.metrics.totalLeads')}
+            value={leadsData.totalLeads}
+            icon="👥"
+            color={theme.palette.primary.main}
+            bgColor={`${theme.palette.primary.main}15`}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={3}>
+          <MetricCard
+            title={t('dashboard.metrics.converted')}
+            value={leadsData.converted}
+            icon="✅"
+            color={theme.palette.success.main}
+            bgColor={`${theme.palette.success.main}15`}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={3}>
+          <MetricCard
+            title={t('dashboard.pending')}
+            value={leadsData.pending}
+            icon="⏳"
+            color={theme.palette.warning.main}
+            bgColor={`${theme.palette.warning.main}15`}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={3}>
+          <MetricCard
+            title={t('dashboard.metrics.lost')}
+            value={leadsData.lost}
+            icon="❌"
+            color={theme.palette.error.main}
+            bgColor={`${theme.palette.error.main}15`}
+          />
+        </Grid>
+      </Grid>
     </Box>
   );
 };

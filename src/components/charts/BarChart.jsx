@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   BarChart as RechartsBarChart, 
   Bar, 
@@ -19,6 +20,8 @@ import {
  *   title?: string
  */
 const BarChartComponent = ({ data, bars, title }) => {
+  const { t } = useTranslation();
+  
   return (
     <div style={{ width: '100%', height: 350 }}>
       {title && (
@@ -44,7 +47,7 @@ const BarChartComponent = ({ data, bars, title }) => {
             tickLine={false}
             tick={{ fill: '#666', fontSize: 12 }}
             label={{ 
-              value: 'Status', 
+              value: t('common.status'), 
               position: 'bottom', 
               offset: 0,
               fill: '#666'
@@ -55,7 +58,7 @@ const BarChartComponent = ({ data, bars, title }) => {
             tickLine={false}
             tick={{ fill: '#666', fontSize: 12 }}
             label={{ 
-              value: 'Count', 
+              value: t('common.count'), 
               angle: -90, 
               position: 'insideLeft',
               fill: '#666'

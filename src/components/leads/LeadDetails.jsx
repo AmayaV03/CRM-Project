@@ -38,8 +38,11 @@ import {
   Info as InfoIcon,
 } from '@mui/icons-material';
 import { format, formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { translateLeadName, translateCompanyName } from '../../utils/i18nUtils';
 
 const LeadDetails = ({ lead, onEdit, onDelete }) => {
+  const { t } = useTranslation();
   const [openNote, setOpenNote] = useState(false);
   const [note, setNote] = useState('');
 
@@ -91,7 +94,7 @@ const LeadDetails = ({ lead, onEdit, onDelete }) => {
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   <Typography variant="body2" color="textSecondary">
-                    <strong>Company:</strong> {lead.company}
+                    <strong>Company:</strong> {translateCompanyName(lead.company, t)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     <strong>Email:</strong> {lead.email}
@@ -103,11 +106,11 @@ const LeadDetails = ({ lead, onEdit, onDelete }) => {
                     <strong>Source:</strong> {lead.source}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    <strong>Assigned To:</strong> {lead.assignedTo}
+                    <strong>Assigned To:</strong> {lead.assignedTo ? translateLeadName(lead.assignedTo, t) : t('common.unassigned')}
                   </Typography>
                   {lead.lastFollowupDate && (
                     <Typography variant="body2" color="textSecondary">
-                      <strong>Last Follow-up:</strong> {format(new Date(lead.lastFollowupDate), 'MMM d, yyyy')}
+                      <strong>{t('leads.fields.lastFollowup')}:</strong> {format(new Date(lead.lastFollowupDate), 'MMM d, yyyy')}
                     </Typography>
                   )}
                   <Typography variant="body2" color="textSecondary">
@@ -123,14 +126,14 @@ const LeadDetails = ({ lead, onEdit, onDelete }) => {
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   <Chip
-                    label={lead.status}
+                    label={t(`leads.statuses.${lead.status}`)}
                     color={getStatusColor(lead.status)}
                     variant="outlined"
                     sx={{ mb: 1 }}
                   />
                   {lead.nextFollowupDate && (
                     <Chip
-                      label={`Next Follow-up: ${format(new Date(lead.nextFollowupDate), 'MMM d, yyyy')}`}
+                      label={`${t('leads.fields.nextFollowupDate')}: ${format(new Date(lead.nextFollowupDate), 'MMM d, yyyy')}`}
                       color={new Date(lead.nextFollowupDate) < new Date() ? 'error' : 'default'}
                       variant="outlined"
                       sx={{ mb: 1 }}
@@ -151,7 +154,7 @@ const LeadDetails = ({ lead, onEdit, onDelete }) => {
               <ListItem key={index}>
                 <ListItemIcon>
                   <Chip
-                    label={history.status}
+                    label={t(`leads.statuses.${history.status}`)}
                     color={getStatusColor(history.status)}
                     size="small"
                     sx={{ height: 'auto' }}

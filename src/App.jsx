@@ -8,6 +8,7 @@ import { store } from './store';
 import i18n from './locales/en/index';
 import AppRoutes from './components/layout/AppRoutes';
 import { selectTheme, setTheme } from './store/slices/uiSlice';
+import { loginSuccess } from './store/slices/authSlice';
 
 // Create theme based on mode
 const getTheme = (mode) => createTheme({
@@ -303,6 +304,27 @@ const ThemeWrapper = ({ children }) => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme && savedTheme !== mode) {
       dispatch(setTheme(savedTheme));
+    }
+  }, []);
+
+  // Development mode: Auto-login for testing
+  useEffect(() => {
+    // Check if we're in development mode and no user is logged in
+    if (process.env.NODE_ENV === 'development') {
+      const isAuthenticated = store.getState().auth.isAuthenticated;
+      if (!isAuthenticated) {
+        // Auto-login with demo admin account
+        const demoUser = {
+          id: '1',
+          name: 'Admin User',
+          email: 'admin@crm.com',
+          roles: ['admin'],
+          permissions: ['manage_leads', 'reassign_leads', 'view_reports', 'manage_users'],
+        };
+        const demoToken = 'demo-token-123';
+        dispatch(loginSuccess({ user: demoUser, token: demoToken }));
+        console.log('Development mode: Auto-logged in as admin user');
+      }
     }
   }, []);
 

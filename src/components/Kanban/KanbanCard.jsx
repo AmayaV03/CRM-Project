@@ -14,13 +14,16 @@ import {
   LinearProgress
 } from '@mui/material';
 import { format, formatDistanceToNow } from 'date-fns';
+import { ar, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
+import { translateCompanyName, translateLeadName } from '../../utils/i18nUtils';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonIcon from '@mui/icons-material/Person';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 // Format currency with compact notation for large numbers
-const formatCurrency = (amount) => {
+const formatCurrency = (amount, locale = 'en-US') => {
   if (amount === undefined || amount === null) return 'N/A';
   
   // Convert string numbers to actual numbers
@@ -30,7 +33,7 @@ const formatCurrency = (amount) => {
   
   // For amounts over 1 million, use compact notation (e.g., $1.2M)
   if (Math.abs(numAmount) >= 1000000) {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'USD',
       notation: 'compact',
@@ -42,7 +45,7 @@ const formatCurrency = (amount) => {
   
   // For amounts over 10,000, use compact notation (e.g., $12K)
   if (Math.abs(numAmount) >= 10000) {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'USD',
       notation: 'compact',
@@ -53,7 +56,7 @@ const formatCurrency = (amount) => {
   }
   
   // For smaller amounts, use standard currency format
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
@@ -111,25 +114,33 @@ const getStatusColor = (status) => {
 };
 
 // Function to get display status text
-const getDisplayStatus = (status) => {
-  if (!status) return 'Unknown';
+const getDisplayStatus = (status, t) => {
+  if (!status) return t('common.unknown');
   
   const statusMap = {
-    'New Lead': 'New',
-    'InProgress': 'In Progress',
-    'Won': 'Won'
+    'New Lead': t('kanban.statuses.new'),
+    'InProgress': t('kanban.statuses.inProgress'),
+    'Won': t('kanban.statuses.won'),
+    'New': t('kanban.statuses.new'),
+    'Contacted': t('kanban.statuses.contacted'),
+    'Follow-up': t('kanban.statuses.followUp'),
+    'In Progress': t('kanban.statuses.inProgress'),
+    'Converted': t('kanban.statuses.converted'),
+    'Lost': t('kanban.statuses.lost')
   };
   
   return statusMap[status] || status;
 };
 
 const KanbanCard = ({ lead, index, onClick }) => {
+  const { t, i18n } = useTranslation();
+  
   // Get the display status
-  const displayStatus = getDisplayStatus(lead.status);
+  const displayStatus = getDisplayStatus(lead.status, t);
   
   // Calculate days until follow-up
   const daysUntilFollowup = lead.nextFollowupDate 
-    ? formatDistanceToNow(new Date(lead.nextFollowupDate), { addSuffix: true })
+    ? formatDistanceToNow(new Date(lead.nextFollowupDate), { addSuffix: true, locale: i18n.language === 'ar' ? ar : enUS })
     : null;
   
   return (
@@ -173,7 +184,7 @@ const KanbanCard = ({ lead, index, onClick }) => {
                 <DragIndicatorIcon color="action" />
               </Box>
               <Typography variant="subtitle1" fontWeight="bold" noWrap>
-                {lead.name}
+                {translateLeadName(lead.name, t)}
               </Typography>
             </Box>
             <Chip 
@@ -203,15 +214,25 @@ const KanbanCard = ({ lead, index, onClick }) => {
                 flexShrink: 0
               }}
             >
-              {lead.company?.charAt(0)?.toUpperCase() || 'C'}
+              {translateCompanyName(lead.company, t)?.charAt(0)?.toUpperCase() || 'C'}
             </Avatar>
             <Box sx={{ minWidth: 0 }}>
               <Typography variant="body2" noWrap>
-                {lead.company || 'No company'}
+                {translateCompanyName(lead.company, t) || t('common.noCompany')}
               </Typography>
               {lead.source && (
                 <Chip 
-                  label={lead.source} 
+                  label={(() => {
+                    // Try different key formats for source translation
+                    const sourceKey = lead.source;
+                    const kebabCase = sourceKey.toLowerCase().replace(/\s+/g, '-');
+                    const titleCase = sourceKey;
+                    
+                    // Try title case first (for Arabic), then kebab case (for English)
+                    return t(`leads.sources.${titleCase}`) || 
+                           t(`leads.sources.${kebabCase}`) || 
+                           sourceKey;
+                  })()} 
                   size="small" 
                   variant="outlined"
                   sx={{ 
@@ -235,18 +256,18 @@ const KanbanCard = ({ lead, index, onClick }) => {
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <AttachMoneyIcon color="primary" sx={{ fontSize: 16, mr: 0.5 }} />
                 <Typography variant="caption" color="text.secondary">
-                  Deal Size:
+                  {t('kanban.dealSize')}:
                 </Typography>
               </Box>
               <Typography variant="body2" fontWeight="medium">
-                {formatCurrency(lead.dealAmount || lead.amount || lead.value || lead.total || 0)}
+                {formatCurrency(lead.dealAmount || lead.amount || lead.value || lead.total || 0, i18n.language === 'ar' ? 'ar' : 'en-US')}
               </Typography>
             </Box>
             
             <Box sx={{ mb: 1 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Win Probability:
+                  {t('kanban.winProbability')}:
                 </Typography>
                 <Typography variant="caption" fontWeight="bold" color={`${getProbabilityColor(lead.winProbability || lead.probability)}.main`}>
                   {formatProbability(lead.winProbability || lead.probability)}
@@ -274,13 +295,13 @@ const KanbanCard = ({ lead, index, onClick }) => {
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <EventAvailableIcon color="action" sx={{ fontSize: 14, mr: 0.5 }} />
                 <Typography variant="caption" color="text.secondary">
-                  Expected Close:
+                  {t('kanban.expectedClose')}:
                 </Typography>
               </Box>
               <Typography variant="caption" fontWeight="medium">
                 {lead.expectedCloseDate 
-                  ? format(new Date(lead.expectedCloseDate), 'MMM d, yyyy')
-                  : 'Not set'}
+                  ? format(new Date(lead.expectedCloseDate), 'MMM d, yyyy', { locale: i18n.language === 'ar' ? ar : enUS })
+                  : t('common.notSet')}
               </Typography>
             </Box>
           </Box>
@@ -290,7 +311,7 @@ const KanbanCard = ({ lead, index, onClick }) => {
           {/* Footer with assignee and follow-up */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Tooltip title={lead.assignedTo || 'Unassigned'}>
+              <Tooltip title={lead.assignedTo ? translateLeadName(lead.assignedTo, t) : t('common.unassigned')}>
                 <Avatar 
                   sx={{ 
                     width: 24, 
@@ -300,16 +321,16 @@ const KanbanCard = ({ lead, index, onClick }) => {
                     fontSize: '0.7rem'
                   }}
                 >
-                  {getInitials(lead.assignedTo || '??')}
+                  {getInitials(lead.assignedTo ? translateLeadName(lead.assignedTo, t) : '??')}
                 </Avatar>
               </Tooltip>
               <Typography variant="caption" color="text.secondary" noWrap>
-                {lead.assignedTo?.split(' ')[0] || 'Unassigned'}
+                {lead.assignedTo ? translateLeadName(lead.assignedTo.split(' ')[0], t) : t('common.unassigned')}
               </Typography>
             </Box>
             
             {lead.nextFollowupDate && (
-              <Tooltip title={`Follow-up ${daysUntilFollowup}`}>
+              <Tooltip title={`${t('kanban.followUp')} ${daysUntilFollowup}`}>
                 <Box sx={{ 
                   display: 'flex', 
                   alignItems: 'center',
@@ -320,7 +341,7 @@ const KanbanCard = ({ lead, index, onClick }) => {
                 }}>
                   <EventAvailableIcon color="action" sx={{ fontSize: 12, mr: 0.5 }} />
                   <Typography variant="caption" color="text.secondary">
-                    {format(new Date(lead.nextFollowupDate), 'MMM d')}
+                    {format(new Date(lead.nextFollowupDate), 'MMM d', { locale: i18n.language === 'ar' ? ar : enUS })}
                   </Typography>
                 </Box>
               </Tooltip>

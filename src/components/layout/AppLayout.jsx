@@ -17,6 +17,8 @@ import {
   Menu,
   MenuItem,
   Chip,
+  Select,
+  FormControl,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -35,7 +37,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toggleSidebar, selectSidebarOpen } from '../../store/slices/uiSlice.jsx';
+import { toggleSidebar, selectSidebarOpen, selectLanguage, setLanguage } from '../../store/slices/uiSlice.jsx';
+import { changeLanguage } from '../../utils/i18nUtils';
 import useAuth from '../../hooks/useAuth';
 import UserProfile from '../auth/UserProfile';
 
@@ -68,16 +71,19 @@ const AppLayout = ({ children }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
   const sidebarOpen = useSelector(selectSidebarOpen);
+  const language = useSelector(selectLanguage);
   const { user, logout, isAdmin, canManageUsers, canViewReports } = useAuth();
+  const dispatch = useDispatch();
 
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
-  const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
+
+  // Check if current language is RTL (Arabic)
+  const isRTL = language === 'ar';
 
   const handleDrawerToggle = () => {
-    dispatch(toggleSidebar());
+    // dispatch(toggleSidebar());
   };
 
   const handleUserMenuClick = (event) => {
@@ -102,18 +108,17 @@ const AppLayout = ({ children }) => {
     handleUserMenuClose();
   };
 
-  const handleLanguageClick = (event) => {
-    setLanguageMenuAnchor(event.currentTarget);
-  };
-
-  const handleLanguageClose = () => {
-    setLanguageMenuAnchor(null);
-  };
-
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    document.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    handleLanguageClose();
+  const handleLanguageChange = async (event) => {
+    const newLanguage = event.target.value;
+    try {
+      await changeLanguage(newLanguage);
+      dispatch(setLanguage(newLanguage));
+      // Force a re-render by updating the document direction
+      document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = newLanguage;
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
   };
 
   const getRoleInfo = () => {
@@ -136,19 +141,11 @@ const AppLayout = ({ children }) => {
   const navigation = getNavigation(isAdmin, canViewReports);
 
   const drawer = (
-    <div>
+    <div style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
       <Toolbar>
-        <Typography variant="h6" noWrap component="div">
+        <Typography variant="h6" noWrap component="div" sx={{ textAlign: isRTL ? 'right' : 'left' }}>
           LeadOrbit
         </Typography>
-        <IconButton
-          color="inherit"
-          aria-label="toggle drawer"
-          onClick={handleDrawerToggle}
-          sx={{ ml: 'auto' }}
-        >
-          <MenuIcon />
-        </IconButton>
       </Toolbar>
       <Divider />
       <List>
@@ -176,7 +173,8 @@ const AppLayout = ({ children }) => {
                   },
                   '&:hover': {
                     backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  }
+                  },
+                  textAlign: isRTL ? 'right' : 'left',
                 }}
               >
                 <ListItemIcon>
@@ -196,7 +194,8 @@ const AppLayout = ({ children }) => {
             sx={{
               '&:hover': {
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              }
+              },
+              textAlign: isRTL ? 'right' : 'left',
             }}
           >
             <ListItemIcon>
@@ -215,52 +214,33 @@ const AppLayout = ({ children }) => {
       height: '100vh', 
       overflow: 'hidden',
       background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
-      backgroundAttachment: 'fixed',
-      direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
+      backgroundAttachment: 'fixed'
     }}>
       <AppBar
         position="fixed"
         sx={{
-          width: { 
-            sm: sidebarOpen 
-              ? `calc(100% - ${drawerWidth}px)` 
-              : '100%' 
-          },
-          ml: { 
-            sm: i18n.language === 'ar' 
-              ? 0 
-              : (sidebarOpen ? `${drawerWidth}px` : 0) 
-          },
-          mr: { 
-            sm: i18n.language === 'ar' 
-              ? (sidebarOpen ? `${drawerWidth}px` : 0) 
-              : 0 
-          },
+          width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
+          ml: { sm: sidebarOpen && !isRTL ? `${drawerWidth}px` : 0 },
+          mr: { sm: sidebarOpen && isRTL ? `${drawerWidth}px` : 0 },
           background: 'linear-gradient(145deg,#FF6B35 0%, #F7931E50 100%)',
-          color: '#FF6B35',
+          color: 'white',
           boxShadow: 1,
-          borderRadius: 0
+          borderRadius: 0,
+          zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
         <Toolbar sx={{ 
           background: 'linear-gradient(135deg, #FF6B3510 0%, #F7931E10 100%)',
-          borderRadius: 0,
-          display: 'flex',
-          justifyContent: 'space-between'
+          borderRadius: 0
         }}>
-
-          <IconButton
-            color="inherit"
-            aria-label="toggle drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: sidebarOpen ? 'none' : 'block' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', justifyContent: 'flex-end' }}>
-
-         
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 2, 
+            width: '100%', 
+            justifyContent: isRTL ? 'flex-start' : 'flex-end',
+            flexDirection: isRTL ? 'row-reverse' : 'row'
+          }}>
             <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
               <Chip
                 label={roleInfo.label}
@@ -271,12 +251,40 @@ const AppLayout = ({ children }) => {
               />
             </Box>
 
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <Select
+                value={language}
+                onChange={handleLanguageChange}
+                sx={{
+                  color: 'white',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'white',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'white',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'white',
+                  },
+                  '& .MuiSelect-icon': {
+                    color: 'white',
+                  },
+                }}
+                startAdornment={
+                  <LanguageIcon sx={{ color: 'white', mr: 1, fontSize: 20 }} />
+                }
+              >
+                <MenuItem value="en">English</MenuItem>
+                <MenuItem value="ar">العربية</MenuItem>
+              </Select>
+            </FormControl>
+
             <IconButton
               color="inherit"
               onClick={handleUserMenuClick}
               sx={{ p: 0 }}
             >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 107, 53, 0.1)', color: 'white' }}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255, 255, 255, 0.1)', color: 'white' }}>
                 {user?.name?.charAt(0)?.toUpperCase() || <PersonIcon />}
               </Avatar>
             </IconButton>
@@ -287,8 +295,8 @@ const AppLayout = ({ children }) => {
             open={Boolean(userMenuAnchor)}
             onClose={handleUserMenuClose}
             onClick={handleUserMenuClose}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            transformOrigin={{ horizontal: isRTL ? 'left' : 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: isRTL ? 'left' : 'right', vertical: 'bottom' }}
             PaperProps={{
               elevation: 8,
               sx: {
@@ -307,7 +315,8 @@ const AppLayout = ({ children }) => {
                   display: 'block',
                   position: 'absolute',
                   top: 0,
-                  right: 14,
+                  right: isRTL ? 'auto' : 14,
+                  left: isRTL ? 14 : 'auto',
                   width: 10,
                   height: 10,
                   bgcolor: 'background.paper',
@@ -321,15 +330,15 @@ const AppLayout = ({ children }) => {
               <Avatar sx={{ bgcolor: 'primary.main' }}>
                 <AccountCircleIcon />
               </Avatar>
-              {t('profile.title')}
+              {t('nav.profile')}
             </MenuItem>
 
             {canManageUsers && (
               <MenuItem onClick={() => navigate('/admin')}>
                 <Avatar sx={{ bgcolor: 'secondary.main' }}>
-                  <SupervisorAccountIcon sx={{ color: 'white' }} />
+                  <SupervisorAccountIcon />
                 </Avatar>
-                Admin Panel
+                {t('nav.admin')}
               </MenuItem>
             )}
 
@@ -348,45 +357,47 @@ const AppLayout = ({ children }) => {
       <Box
         component="nav"
         sx={{ 
-          width: { sm: sidebarOpen ? drawerWidth : 0 }, 
-          flexShrink: { sm: 0 }
+          width: { sm: sidebarOpen && !isRTL ? drawerWidth : 0 }, 
+          flexShrink: { sm: 0 },
+          order: isRTL ? 2 : 0,
+          zIndex: (theme) => theme.zIndex.drawer,
         }}
       >
         <Drawer
           variant="temporary"
           open={sidebarOpen}
           onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
+          ModalProps={{ keepMounted: true }}
+          anchor={isRTL ? 'right' : 'left'}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { 
-              boxSizing: 'border-box', 
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
               background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
               color: 'white',
-              borderRadius: 0
+              borderRadius: 0,
+              direction: isRTL ? 'rtl' : 'ltr',
             },
           }}
-          anchor={i18n.language === 'ar' ? 'right' : 'left'}
         >
           {drawer}
         </Drawer>
         <Drawer
-          variant="permanent"
+          variant="persistent"
+          open={sidebarOpen}
+          anchor={isRTL ? 'right' : 'left'}
           sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { 
-              boxSizing: 'border-box', 
+            display: { xs: 'none', sm: sidebarOpen ? 'block' : 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
               background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
               color: 'white',
-              borderRadius: 0
+              borderRadius: 0,
+              direction: isRTL ? 'rtl' : 'ltr',
             },
           }}
-          open
-          anchor={i18n.language === 'ar' ? 'right' : 'left'}
         >
           {drawer}
         </Drawer>
@@ -397,15 +408,31 @@ const AppLayout = ({ children }) => {
         sx={{
           flexGrow: 1,
           p: 0,
-          width: { sm: sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%' },
+          width: { sm: isRTL ? (sidebarOpen ? `calc(100% - ${drawerWidth}px)` : '100%') : '100%' },
           height: '100vh',
-          overflow: 'auto',
+          overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
+          order: isRTL ? 1 : 0,
+          direction: isRTL ? 'rtl' : 'ltr',
+          textAlign: isRTL ? 'right' : 'left',
+          ml: { sm: isRTL ? 0 : 0 },
+          mr: { sm: sidebarOpen && isRTL ? `${drawerWidth}px` : 0 },
         }}
       >
         <Toolbar />
-        <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+        <Box sx={{ 
+          flex: 1, 
+          overflow: 'auto', 
+          p: 0,
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          direction: isRTL ? 'rtl' : 'ltr',
+          textAlign: isRTL ? 'right' : 'left',
+        }}>
           {children}
         </Box>
       </Box>

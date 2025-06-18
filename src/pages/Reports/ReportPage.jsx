@@ -277,7 +277,7 @@ export default function ReportPage({ data }) {
           <Grid item xs={6}>
             <Typography variant="subtitle2">Improvement Tips</Typography>
             <Box sx={{ bgcolor: 'background.paper', p: 2, borderRadius: 2 }}>
-              <Typography variant="body2">• Increase follow-ups in Qualification</Typography>
+              <Typography variant="body2">• {t('reports.improvements.increaseFollowups')}</Typography>
               <Typography variant="body2">• Improve proposal templates</Typography>
               <Typography variant="body2">• Reduce response time in Negotiation</Typography>
             </Box>

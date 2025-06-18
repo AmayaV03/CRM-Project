@@ -4,14 +4,15 @@ import { leadService } from '../../services/leadService';
 
 const initialState = {
   items: JSON.parse(localStorage.getItem('crm_leads')) || [
+    // Sample data - if translations aren't working, clear localStorage to refresh this data
     {
       id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-      company: 'Example Corp',
+      name: 'Ahmed Ali',
+      email: 'ahmed@example.com',
+      company: 'شركة المثال',
       status: 'New',
       source: 'Website',
-      assignedTo: 'John Smith',
+      assignedTo: 'علي أحمد',
       nextFollowupDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -20,12 +21,12 @@ const initialState = {
     },
     {
       id: '2',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      company: 'Tech Solutions',
+      name: 'سارة أحمد',
+      email: 'sarah@example.com',
+      company: 'حلول التقنية',
       status: 'Contacted',
       source: 'Referral',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       lastFollowupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date().toISOString(),
@@ -35,12 +36,12 @@ const initialState = {
     },
     {
       id: '3',
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      company: 'Digital Solutions',
+      name: 'Mohammed Ali',
+      email: 'mohammed@example.com',
+      company: 'حلول رقمية',
       status: 'Won',
       source: 'Trade Show',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: null,
       createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
@@ -49,12 +50,12 @@ const initialState = {
     },
     {
       id: '4',
-      name: 'Emily Davis',
-      email: 'emily@example.com',
-      company: 'Innovate Tech',
+      name: 'نورا محمد',
+      email: 'noura@example.com',
+      company: 'تقنيات الابتكار',
       status: 'Lost',
       source: 'Cold Call',
-      assignedTo: 'John Smith',
+      assignedTo: 'علي أحمد',
       nextFollowupDate: null,
       createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -63,12 +64,12 @@ const initialState = {
     },
     {
       id: '5',
-      name: 'Robert Wilson',
-      email: 'robert@example.com',
-      company: 'Tech Innovations',
+      name: 'عمر خالد',
+      email: 'omar@example.com',
+      company: 'الابتكارات التقنية',
       status: 'Follow-up',
       source: 'Email Campaign',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
@@ -77,12 +78,12 @@ const initialState = {
     },
     {
       id: '6',
-      name: 'Michael Chen',
-      email: 'michael@example.com',
-      company: 'Tech Ventures',
+      name: 'كريم أحمد',
+      email: 'kareem@example.com',
+      company: 'مشاريع التقنية',
       status: 'Follow-up',
       source: 'Cold Call',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -91,12 +92,12 @@ const initialState = {
     },
     {
       id: '7',
-      name: 'Alex Johnson',
-      email: 'alex@example.com',
-      company: 'Tech Innovations',
+      name: 'ليلى محمد',
+      email: 'layla@example.com',
+      company: 'الابتكارات التقنية',
       status: 'Contacted',
       source: 'Email Campaign',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
       lastFollowupDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -106,12 +107,12 @@ const initialState = {
     },
     {
       id: '8',
-      name: 'Emily Davis',
-      email: 'emily@example.com',
-      company: 'Innovate Tech',
+      name: 'نورا محمد',
+      email: 'noura@example.com',
+      company: 'تقنيات الابتكار',
       status: 'Lost',
       source: 'Cold Call',
-      assignedTo: 'John Smith',
+      assignedTo: 'علي أحمد',
       nextFollowupDate: null,
       createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -120,12 +121,12 @@ const initialState = {
     },
     {
       id: '9',
-      name: 'Robert William',
-      email: 'robert@example.com',
-      company: 'Tech Innovations',
+      name: 'عمر خالد',
+      email: 'omar@example.com',
+      company: 'الابتكارات التقنية',
       status: 'Follow-up',
       source: 'Email Campaign',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
@@ -134,12 +135,12 @@ const initialState = {
     },
     {
       id: '10',
-      name: 'Michael Chen',
-      email: 'michael@example.com',
-      company: 'Tech Ventures',
+      name: 'كريم أحمد',
+      email: 'kareem@example.com',
+      company: 'مشاريع التقنية',
       status: 'Follow-up',
       source: 'Cold Call',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -148,12 +149,12 @@ const initialState = {
     },
     {
       id: '11',
-      name: 'Alex Johnson',
-      email: 'alex@example.com',
-      company: 'Tech Innovations',
+      name: 'ليلى محمد',
+      email: 'layla@example.com',
+      company: 'الابتكارات التقنية',
       status: 'Contacted',
       source: 'Email Campaign',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'فاطمة محمد',
       nextFollowupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -162,12 +163,12 @@ const initialState = {
     },
     {
       id: '12',
-      name: 'Henry Williams',
-      email: 'henry@example.com',
-      company: 'Innovate Tech',
+      name: 'حسين وليام',
+      email: 'hussain@example.com',
+      company: 'تقنيات الابتكار',
       status: 'Lost',
       source: 'Cold Call',
-      assignedTo: 'John Smith',
+      assignedTo: 'علي أحمد',
       nextFollowupDate: null,
       createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -176,12 +177,12 @@ const initialState = {
     },
     {
       id: '13',
-      name: 'Olivia Davis',
+      name: 'Olivia Das',
       email: 'olivia@example.com',
       company: 'Tech Innovations',
       status: 'Follow-up',
       source: 'Email Campaign',
-      assignedTo: 'Sarah Johnson',
+      assignedTo: 'سارة أحمد',
       nextFollowupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
@@ -190,34 +191,51 @@ const initialState = {
     },
     {
       id: '14',
-      name: 'David Miller',
+      name: 'مايكل تشين',
       email: 'david@example.com',
       company: 'StartupCorp',
       status: 'Contacted',
       source: 'LinkedIn',
-      assignedTo: 'John Smith',
+      assignedTo: 'روبرت وليام',
       nextFollowupDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // Overdue
       createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       lastActivity: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       notes: []
     }
-
-
-    
   ],
   loading: false,
   error: null,
-  filters: {
-    status: '',
-    owner: '',
-    source: '',
-    dateRange: { start: null, end: null },
-    searchTerm: '',
-  },
-  selectedLead: null,
+  filter: 'all',
+  searchQuery: '',
   sortBy: 'createdAt',
   sortOrder: 'desc',
+  selectedLead: null,
+  isFormOpen: false,
+  isDetailsOpen: false,
+  isDeleteDialogOpen: false,
+  leadToDelete: null,
+  isReassignDialogOpen: false,
+  leadToReassign: null,
+  isExportDialogOpen: false,
+  exportFormat: 'csv',
+  isImportDialogOpen: false,
+  importFile: null,
+  importProgress: 0,
+  importStatus: null,
+  isBulkActionDialogOpen: false,
+  selectedLeads: [],
+  bulkAction: null,
+  isFilterDrawerOpen: false,
+  filters: {
+    status: [],
+    source: [],
+    assignedTo: [],
+    dateRange: {
+      start: null,
+      end: null
+    }
+  }
 };
 
 // Initialize localStorage with dummy data if it's empty
@@ -291,11 +309,10 @@ const leadsSlice = createSlice({
     },
     clearFilters: (state) => {
       state.filters = {
-        status: '',
-        owner: '',
-        source: '',
-        dateRange: { start: null, end: null },
-        searchTerm: ''
+        status: [],
+        source: [],
+        assignedTo: [],
+        dateRange: { start: null, end: null }
       };
     },
     setSort: (state, action) => {
@@ -396,14 +413,20 @@ export const selectFilteredLeads = state => {
   if (filters.status) {
     filteredLeads = filteredLeads.filter(lead => lead.status === filters.status);
   }
-  if (filters.owner) {
-    filteredLeads = filteredLeads.filter(lead => lead.owner === filters.owner);
-  }
   if (filters.source) {
     filteredLeads = filteredLeads.filter(lead => lead.source === filters.source);
   }
-  if (filters.searchTerm) {
-    const searchTerm = filters.searchTerm.toLowerCase();
+  if (filters.assignedTo) {
+    filteredLeads = filteredLeads.filter(lead => filters.assignedTo.includes(lead.assignedTo));
+  }
+  if (filters.dateRange.start && filters.dateRange.end) {
+    filteredLeads = filteredLeads.filter(lead => {
+      const date = new Date(lead.createdAt);
+      return date >= new Date(filters.dateRange.start) && date <= new Date(filters.dateRange.end);
+    });
+  }
+  if (filters.searchQuery) {
+    const searchTerm = filters.searchQuery.toLowerCase();
     filteredLeads = filteredLeads.filter(
       lead =>
         lead.name.toLowerCase().includes(searchTerm) ||

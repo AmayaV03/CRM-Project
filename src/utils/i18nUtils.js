@@ -112,4 +112,63 @@ export const getMarginDirection = (side) => {
  */
 export const getPaddingDirection = (side) => {
   return getMarginDirection(side);
+};
+
+// Utility function to translate data fields (company names, lead names, etc.)
+export const translateDataField = (field, value, t) => {
+  if (!value) return value;
+  
+  // Debug current language
+  console.log(`🌍 Current language: ${i18n.language}`);
+  
+  // Test if the translation function is working
+  const testTranslation = t('common.name');
+  console.log(`🧪 Test translation: "common.name" → "${testTranslation}"`);
+  
+  // Direct test of our translation key
+  const directTest = t(`data.${field}.${value}`);
+  console.log(`🎯 Direct test: t("data.${field}.${value}") → "${directTest}"`);
+  
+  // Try to find translation in data section
+  const translation = t(`data.${field}.${value}`);
+  
+  // Debug logging
+  console.log(`🔍 Translating ${field}: "${value}"`);
+  console.log(`🔑 Translation key: data.${field}.${value}`);
+  console.log(`📝 Translation result: "${translation}"`);
+  
+  // Check if the key exists in the translation object
+  try {
+    const translationObj = i18n.getResourceBundle(i18n.language, 'translation');
+    const dataSection = translationObj?.data?.[field];
+    console.log(`📋 Available keys in data.${field}:`, Object.keys(dataSection || {}));
+    console.log(`🔍 Looking for key: "${value}"`);
+    console.log(`📋 Key exists:`, dataSection && value in dataSection);
+    
+    // Direct access test
+    if (dataSection && value in dataSection) {
+      console.log(`✅ Direct access: dataSection["${value}"] = "${dataSection[value]}"`);
+    }
+  } catch (error) {
+    console.log(`❌ Error checking translation object:`, error);
+  }
+  
+  // If translation exists and is different from the key, return it
+  if (translation && translation !== `data.${field}.${value}`) {
+    console.log(`✅ Translation found: "${value}" → "${translation}"`);
+    return translation;
+  }
+  
+  // Otherwise return the original value
+  console.log(`❌ No translation found for "${value}", returning original`);
+  return value;
+};
+
+// Specific helper functions for common data fields
+export const translateCompanyName = (companyName, t) => {
+  return translateDataField('companies', companyName, t);
+};
+
+export const translateLeadName = (leadName, t) => {
+  return translateDataField('leadNames', leadName, t);
 }; 
