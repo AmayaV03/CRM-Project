@@ -651,7 +651,7 @@ const LoginForm = () => {
                 }} 
                 onClick={handleForgotPassword}
               >
-                Forgot Password?
+                {t('auth.forgotPassword')}
               </Button>
             </Box>
 

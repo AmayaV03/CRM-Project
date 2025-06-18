@@ -350,22 +350,22 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
         <StyledTabs value={filter} onChange={(event, newValue) => setFilter(newValue)}>
           <StyledTab value="all" label={
             <StyledBadge badgeContent={allLeadsCount} color="primary">
-              <StyledTypography>All Leads</StyledTypography>
+              <StyledTypography>{t('leads.allLeads')}</StyledTypography>
             </StyledBadge>
           } />
           <StyledTab value="followed" label={
             <StyledBadge badgeContent={followedCount} color="success">
-              <StyledTypography>Followed</StyledTypography>
+              <StyledTypography>{t('leads.followed')}</StyledTypography>
             </StyledBadge>
           } />
           <StyledTab value="scheduled" label={
             <StyledBadge badgeContent={scheduledCount} color="warning">
-              <StyledTypography>Scheduled</StyledTypography>
+              <StyledTypography>{t('leads.scheduled')}</StyledTypography>
             </StyledBadge>
           } />
           <StyledTab value="notFollowed" label={
             <StyledBadge badgeContent={notFollowedCount} color="error">
-              <StyledTypography>Not Followed</StyledTypography>
+              <StyledTypography>{t('leads.notFollowed')}</StyledTypography>
             </StyledBadge>
           } />
         </StyledTabs>
@@ -388,7 +388,7 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
           </Box>
         ) : error ? (
           <Alert severity="error" sx={{ mt: 2 }}>
-            {error.message || 'Failed to load leads'}
+            {error.message || t('errors.generic')}
           </Alert>
         ) : (
           <TableContainer component={Paper} sx={{
@@ -475,11 +475,11 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
         aria-describedby="lead-form-description"
       >
         <DialogTitle id="lead-form-title">
-          {selectedLead ? 'Edit Lead' : 'New Lead'}
+          {selectedLead ? t('leads.editLead') : t('leads.addNew')}
         </DialogTitle>
         <DialogContent>
           <Typography id="lead-form-description" variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-            {selectedLead ? 'Update lead information' : 'Create a new lead'}
+            {selectedLead ? t('leads.messages.updated') : t('leads.messages.created')}
           </Typography>
           <LeadForm
             lead={selectedLead}

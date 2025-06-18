@@ -123,6 +123,7 @@ const getDisplayStatus = (status, t) => {
     'Won': t('kanban.statuses.won'),
     'New': t('kanban.statuses.new'),
     'Contacted': t('kanban.statuses.contacted'),
+    'Follow-up': t('kanban.statuses.followUp'),
     'In Progress': t('kanban.statuses.inProgress'),
     'Converted': t('kanban.statuses.converted'),
     'Lost': t('kanban.statuses.lost')

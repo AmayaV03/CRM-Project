@@ -9,6 +9,7 @@ import { useLeads } from '../../hooks/useLeads';
 const COLUMNS = [
   { id: 'new', titleKey: 'kanban.columns.new' },
   { id: 'contacted', titleKey: 'kanban.columns.contacted' },
+  { id: 'follow_up', titleKey: 'kanban.columns.followUp' },
   { id: 'in_progress', titleKey: 'kanban.columns.inProgress' },
   { id: 'converted', titleKey: 'kanban.columns.converted' },
   { id: 'lost', titleKey: 'kanban.columns.lost' },
@@ -19,6 +20,7 @@ const statusToColumnId = {
   'New': 'new',
   'New Lead': 'new',
   'Contacted': 'contacted',
+  'Follow-up': 'follow_up',
   'In Progress': 'in_progress',
   'InProgress': 'in_progress',
   'Converted': 'converted',
@@ -30,6 +32,7 @@ const statusToColumnId = {
 const columnIdToStatus = {
   'new': 'New',
   'contacted': 'Contacted',
+  'follow_up': 'Follow-up',
   'in_progress': 'In Progress',
   'converted': 'Converted',
   'lost': 'Lost',
@@ -50,6 +53,7 @@ const getNormalizedStatus = (status) => {
     'New Lead': 'New',
     'New': 'New',
     'Contacted': 'Contacted',
+    'Follow-up': 'Follow-up',
     'Converted': 'Converted',
     'Lost': 'Lost'
   };

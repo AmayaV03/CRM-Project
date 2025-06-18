@@ -90,28 +90,28 @@ const AdminDashboard = () => {
       value: userCounts.total.toString(),
       icon: <PeopleIcon />,
       color: 'primary',
-      description: 'Active system users',
+      description: t('admin.metrics.activeSystemUsers'),
     },
     {
       title: t('admin.userRoles.adminUsers'),
       value: userCounts.admin.toString(),
       icon: <SupervisorIcon />,
       color: 'error',
-      description: 'Administrator accounts',
+      description: t('admin.metrics.administratorAccounts'),
     },
     {
       title: t('admin.userRoles.salesManagers'),
       value: userCounts.salesManager.toString(),
       icon: <SettingsIcon />,
       color: 'warning',
-      description: 'Sales management roles',
+      description: t('admin.metrics.salesManagementRoles'),
     },
     {
       title: t('admin.userRoles.salesReps'),
       value: userCounts.salesperson.toString(),
       icon: <PersonAddIcon />,
       color: 'info',
-      description: 'Sales representatives',
+      description: t('admin.metrics.salesRepresentatives'),
     },
   ];
 
@@ -123,7 +123,7 @@ const AdminDashboard = () => {
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Alert severity="error" sx={{ mb: 2 }}>
-          Access Denied: You don't have permission to access the admin panel.
+          {t('admin.accessDenied')}
         </Alert>
       </Container>
     );
@@ -235,7 +235,7 @@ const AdminDashboard = () => {
                     <Typography variant="h6">{t('admin.quickActionCards.userManagement')}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Add, edit, or remove users from the system. Manage roles and permissions.
+                    {t('admin.quickActionCards.userManagementDescription')}
                   </Typography>
                 </CardContent>
                 <CardActions>
@@ -260,7 +260,7 @@ const AdminDashboard = () => {
                     <Typography variant="h6">{t('admin.quickActionCards.systemSettings')}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Configure system-wide settings, preferences, and application behavior.
+                    {t('admin.quickActionCards.systemSettingsDescription')}
                   </Typography>
                 </CardContent>
                 <CardActions>
@@ -285,7 +285,7 @@ const AdminDashboard = () => {
                     <Typography variant="h6">{t('admin.quickActionCards.securitySettings')}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Manage security policies, authentication settings, and access controls.
+                    {t('admin.quickActionCards.securitySettingsDescription')}
                   </Typography>
                 </CardContent>
                 <CardActions>

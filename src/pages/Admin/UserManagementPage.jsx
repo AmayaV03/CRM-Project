@@ -123,14 +123,14 @@ const UserManagementPage = () => {
       localStorage.removeItem('crm_users');
       setNotification({
         open: true,
-        message: 'User data cleared from local storage!',
+        message: t('admin.userManagement.messages.dataCleared'),
         severity: 'info'
       });
     } catch (error) {
       console.error('Error clearing users from localStorage:', error);
       setNotification({
         open: true,
-        message: 'Error clearing user data!',
+        message: t('admin.userManagement.messages.errorClearingData'),
         severity: 'error'
       });
     }
@@ -150,14 +150,14 @@ const UserManagementPage = () => {
       
       setNotification({
         open: true,
-        message: 'User data exported successfully!',
+        message: t('admin.userManagement.messages.exportSuccess'),
         severity: 'success'
       });
     } catch (error) {
       console.error('Error exporting users:', error);
       setNotification({
         open: true,
-        message: 'Error exporting user data!',
+        message: t('admin.userManagement.messages.exportError'),
         severity: 'error'
       });
     }
@@ -179,7 +179,7 @@ const UserManagementPage = () => {
               saveUsersToStorage(importedUsers);
               setNotification({
                 open: true,
-                message: `Successfully imported ${importedUsers.length} users!`,
+                message: t('admin.userManagement.messages.importSuccess', { count: importedUsers.length }),
                 severity: 'success'
               });
             } else {
@@ -189,7 +189,7 @@ const UserManagementPage = () => {
             console.error('Error importing users:', error);
             setNotification({
               open: true,
-              message: 'Error importing user data. Please check the file format.',
+              message: t('admin.userManagement.messages.importError'),
               severity: 'error'
             });
           }
@@ -523,7 +523,7 @@ const UserManagementPage = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: 'Name is required' }}
+                rules={{ required: t('admin.userManagement.validation.nameRequired') }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -543,11 +543,11 @@ const UserManagementPage = () => {
                 name="email"
                 control={control}
                 rules={{
-                  required: 'Email is required',
+                  required: t('admin.userManagement.validation.emailRequired'),
                   pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Invalid email format',
-                  },
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: t('admin.userManagement.validation.emailInvalid')
+                  }
                 }}
                 render={({ field }) => (
                   <TextField
@@ -599,7 +599,7 @@ const UserManagementPage = () => {
               <Controller
                 name="roles"
                 control={control}
-                rules={{ required: 'Role is required' }}
+                rules={{ required: t('admin.userManagement.validation.roleRequired') }}
                 render={({ field }) => (
                   <FormControl fullWidth error={!!errors.roles}>
                     <InputLabel>Role</InputLabel>
@@ -643,7 +643,7 @@ const UserManagementPage = () => {
           disabled={!isValid || loading}
           startIcon={loading ? <CircularProgress size={16} /> : <SaveIcon />}
         >
-          {selectedUser ? 'Update' : 'Create'} User
+          {selectedUser ? t('admin.userManagement.buttons.update') : t('admin.userManagement.buttons.create')} {t('admin.userManagement.user')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -663,10 +663,10 @@ const UserManagementPage = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
         <Box>
           <Typography variant="h5" component="h1" gutterBottom>
-            User Management
+            {t('admin.userManagement.title')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Manage system users, roles, and permissions
+            {t('admin.userManagement.subtitle')}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -677,7 +677,7 @@ const UserManagementPage = () => {
             variant="outlined"
             size="small"
           >
-            Refresh
+            {t('admin.userManagement.buttons.refresh')}
           </Button>
           <Button
             startIcon={<AddIcon />}
@@ -685,7 +685,7 @@ const UserManagementPage = () => {
             onClick={handleAddUser}
             size="small"
           >
-            Add User
+            {t('admin.userManagement.buttons.addUser')}
           </Button>
         </Box>
       </Box>
@@ -697,7 +697,7 @@ const UserManagementPage = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                placeholder="Search users by name or email..."
+                placeholder={t('admin.userManagement.search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 InputProps={{
@@ -707,22 +707,22 @@ const UserManagementPage = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <FormControl fullWidth>
-                <InputLabel>Filter by Role</InputLabel>
+                <InputLabel>{t('admin.userManagement.filters.role')}</InputLabel>
                 <Select
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
-                  label="Filter by Role"
+                  label={t('admin.userManagement.filters.role')}
                 >
-                  <MenuItem value="all">All Roles</MenuItem>
-                  <MenuItem value="admin">Administrator</MenuItem>
-                  <MenuItem value="sales_manager">Sales Manager</MenuItem>
-                  <MenuItem value="salesperson">Salesperson</MenuItem>
+                  <MenuItem value="all">{t('admin.userManagement.filters.allRoles')}</MenuItem>
+                  <MenuItem value="admin">{t('admin.userManagement.roles.administrator')}</MenuItem>
+                  <MenuItem value="sales_manager">{t('admin.userManagement.roles.salesManager')}</MenuItem>
+                  <MenuItem value="salesperson">{t('admin.userManagement.roles.salesperson')}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
               <Typography variant="body2" color="text.secondary">
-                Total Users: {filteredUsers.length}
+                {t('admin.userManagement.totalUsers')}: {filteredUsers.length}
               </Typography>
             </Grid>
           </Grid>
@@ -938,14 +938,14 @@ const UserManagementPage = () => {
       <UserFormDialog
         open={showAddDialog}
         onClose={() => setShowAddDialog(false)}
-        title="Add New User"
+        title={t('admin.userManagement.dialog.createUser')}
       />
 
       {/* Edit User Dialog */}
       <UserFormDialog
         open={showEditDialog}
         onClose={() => setShowEditDialog(false)}
-        title="Edit User"
+        title={t('admin.userManagement.dialog.updateUser')}
       />
 
       {/* Delete Confirmation Dialog */}

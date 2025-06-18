@@ -26,6 +26,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
 import { enqueueSnackbar } from '../../services/notificationService';
+import { exportDashboardData } from '../../services/reportService';
 
 const Reports = () => {
   const { t } = useTranslation();
@@ -35,22 +36,22 @@ const Reports = () => {
   const reportData = {
     performance: { value: 68, trend: 'up', change: '+12%' },
     sources: [
-      { name: 'Website', value: 45, color: theme.palette.primary.main },
-      { name: 'Referral', value: 28, color: theme.palette.secondary.main },
-      { name: 'Social', value: 17, color: theme.palette.info.main },
-      { name: 'Email', value: 10, color: theme.palette.warning.main }
+      { name: t('reports.sources.website'), value: 45, color: theme.palette.primary.main },
+      { name: t('reports.sources.referral'), value: 28, color: theme.palette.secondary.main },
+      { name: t('reports.sources.social'), value: 17, color: theme.palette.info.main },
+      { name: t('reports.sources.email'), value: 10, color: theme.palette.warning.main }
     ],
     leadsOverTime: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      labels: [t('datetime.jan'), t('datetime.feb'), t('datetime.mar'), t('datetime.apr'), t('datetime.may'), t('datetime.jun')],
       values: [120, 190, 170, 220, 240, 210]
     },
     conversion: {
-      stages: ['Leads', 'Contacted', 'Demo', 'Closed'],
+      stages: [t('reports.conversion.leads'), t('reports.conversion.contacted'), t('reports.conversion.demo'), t('reports.conversion.closed')],
       values: [1000, 600, 300, 150],
       rates: ['100%', '60%', '50%', '50%']
     },
     status: {
-      labels: ['New', 'In Progress', 'Qualified', 'Closed Won', 'Closed Lost'],
+      labels: [t('reports.status.new'), t('reports.status.inProgress'), t('reports.status.qualified'), t('reports.status.closedWon'), t('reports.status.closedLost')],
       values: [120, 85, 60, 45, 30]
     }
   };
@@ -59,10 +60,10 @@ const Reports = () => {
     try {
       await exportDashboardData({
         metrics: [
-          { title: 'TotalLeads', value: reportData.leadsOverTime.values.reduce((a,b) => a + b, 0) },
-          { title: 'NewThisWeek', value: 42 },
-          { title: 'Converted', value: reportData.conversion.values[3] },
-          { title: 'Lost', value: 15 }
+          { title: t('dashboard.metrics.totalLeads'), value: reportData.leadsOverTime.values.reduce((a,b) => a + b, 0) },
+          { title: t('dashboard.metrics.newThisWeek'), value: 42 },
+          { title: t('dashboard.metrics.converted'), value: reportData.conversion.values[3] },
+          { title: t('dashboard.metrics.lost'), value: 15 }
         ],
         leadSource: reportData.sources,
         leadStatus: reportData.status.labels.map((label, i) => ({
@@ -74,9 +75,9 @@ const Reports = () => {
         conversionRate: Math.round((reportData.conversion.values[3] / reportData.leadsOverTime.values.reduce((a,b) => a + b, 0)) * 100)
       });
       
-      enqueueSnackbar('Report exported successfully', { variant: 'success' });
+      enqueueSnackbar(t('dashboard.messages.exportSuccess'), { variant: 'success' });
     } catch (error) {
-      enqueueSnackbar('Export failed: ' + error.message, { variant: 'error' });
+      enqueueSnackbar(t('dashboard.messages.exportFailed', { error: error.message }), { variant: 'error' });
     }
   };
 
@@ -106,10 +107,10 @@ const Reports = () => {
               )
             }}
           >
-            <MenuItem value="last7">Last 7 Days</MenuItem>
-            <MenuItem value="last30">Last 30 Days</MenuItem>
-            <MenuItem value="last90">Last Quarter</MenuItem>
-            <MenuItem value="custom">Custom Range</MenuItem>
+            <MenuItem value="last7">{t('reports.filters.last7Days')}</MenuItem>
+            <MenuItem value="last30">{t('reports.filters.last30Days')}</MenuItem>
+            <MenuItem value="last90">{t('reports.filters.lastQuarter')}</MenuItem>
+            <MenuItem value="custom">{t('reports.filters.customRange')}</MenuItem>
           </TextField>
           
           <Button 
@@ -118,7 +119,7 @@ const Reports = () => {
             onClick={handleExport}
             sx={{ textTransform: 'none' }}
           >
-            Export
+            {t('common.export')}
           </Button>
         </Box>
       </Box>
@@ -138,14 +139,14 @@ const Reports = () => {
                   mr: 2,
                   fontSize: '2rem'
                 }} />
-                <Typography variant="h6">Performance</Typography>
+                <Typography variant="h6">{t('reports.performance')}</Typography>
               </Box>
               <Divider sx={{ mb: 2 }} />
               <Typography variant="h3" sx={{ fontWeight: 700 }}>
                 {reportData.performance.value}%
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Conversion Rate ({reportData.performance.change} from last period)
+                {t('reports.conversionRate')} ({reportData.performance.change} {t('reports.fromLastPeriod')})
               </Typography>
             </CardContent>
           </Card>
@@ -161,7 +162,7 @@ const Reports = () => {
                   mr: 2,
                   fontSize: '2rem'
                 }} />
-                <Typography variant="h6">Top Sources</Typography>
+                <Typography variant="h6">{t('reports.topSources')}</Typography>
               </Box>
               <Divider sx={{ mb: 2 }} />
               {reportData.sources.map((source, index) => (
@@ -184,12 +185,12 @@ const Reports = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
                 <Timeline sx={{ mr: 1, color: theme.palette.success.main }} />
-                Leads Over Time
+                {t('reports.charts.leadsOverTime')}
               </Typography>
               <TextField size="small" select defaultValue="weekly" sx={{ width: 120 }}>
-                <MenuItem value="daily">Daily</MenuItem>
-                <MenuItem value="weekly">Weekly</MenuItem>
-                <MenuItem value="monthly">Monthly</MenuItem>
+                <MenuItem value="daily">{t('reports.filters.daily')}</MenuItem>
+                <MenuItem value="weekly">{t('reports.filters.weekly')}</MenuItem>
+                <MenuItem value="monthly">{t('reports.filters.monthly')}</MenuItem>
               </TextField>
             </Box>
             <Box sx={{ height: 300, p: 1 }}>
@@ -225,10 +226,10 @@ const Reports = () => {
               <Divider sx={{ my: 1 }} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2">
-                  <strong>Avg:</strong> 192/mo
+                  <strong>{t('reports.average')}:</strong> 192/{t('reports.perMonth')}
                 </Typography>
                 <Typography variant="body2" color="success.main">
-                  <strong>↑ 18%</strong> from last period
+                  <strong>↑ 18%</strong> {t('reports.fromLastPeriod')}
                 </Typography>
               </Box>
             </Box>
@@ -240,7 +241,7 @@ const Reports = () => {
           <Card sx={{ height: '100%', p: 2 }}>
             <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <ShowChart sx={{ mr: 1, color: theme.palette.warning.main }} />
-              Conversion Funnel
+              {t('reports.conversionFunnel')}
             </Typography>
             <Box sx={{ height: 300, p: 1 }}>
               {reportData.conversion.stages.map((stage, index) => (
@@ -278,7 +279,7 @@ const Reports = () => {
           <Card sx={{ height: '100%', p: 2 }}>
             <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Assessment sx={{ mr: 1, color: theme.palette.info.main }} />
-              Lead Sources
+              {t('reports.leadSources')}
             </Typography>
             <Box sx={{ height: 300 }}>
               {/* Replace with actual PieChart component */}
@@ -290,7 +291,7 @@ const Reports = () => {
                 bgcolor: theme.palette.grey[100],
                 borderRadius: 1
               }}>
-                <Typography color="text.secondary">Lead Sources Chart</Typography>
+                <Typography color="text.secondary">{t('reports.leadSourcesChart')}</Typography>
               </Box>
             </Box>
           </Card>
@@ -302,9 +303,9 @@ const Reports = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center' }}>
                 <BarChartIcon sx={{ mr: 1, color: theme.palette.error.main }} />
-                Status Distribution
+                {t('reports.statusDistribution')}
               </Typography>
-              <Button size="small" endIcon={<Download />}>Export Data</Button>
+              <Button size="small" endIcon={<Download />}>{t('reports.exportData')}</Button>
             </Box>
             <Box sx={{ height: 300 }}>
               {/* Replace with actual BarChart component */}
@@ -316,7 +317,7 @@ const Reports = () => {
                 bgcolor: theme.palette.grey[100],
                 borderRadius: 1
               }}>
-                <Typography color="text.secondary">Status Distribution Chart</Typography>
+                <Typography color="text.secondary">{t('reports.statusDistributionChart')}</Typography>
               </Box>
             </Box>
           </Card>

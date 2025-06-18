@@ -40,8 +40,10 @@ import {
   Save as SaveIcon,
   Restore as RestoreIcon,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 const SystemSettings = () => {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState({
     // Application Settings
     appName: 'LeadFlow CRM',
@@ -152,10 +154,10 @@ const SystemSettings = () => {
     <Box sx={{ p: 3 }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" component="h2" gutterBottom>
-          System Settings
+          {t('systemSettings.title')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Configure system-wide settings and preferences
+          {t('systemSettings.description')}
         </Typography>
       </Box>
 
@@ -166,8 +168,8 @@ const SystemSettings = () => {
           sx={{ mb: 3 }}
         >
           {saveStatus === 'success' 
-            ? 'Settings saved successfully!' 
-            : 'Error saving settings. Please try again.'
+            ? t('systemSettings.saveSuccess') 
+            : t('systemSettings.saveError')
           }
         </Alert>
       )}
@@ -180,7 +182,7 @@ const SystemSettings = () => {
           onClick={handleSaveSettings}
           disabled={!isModified}
         >
-          Save Changes
+          {t('systemSettings.saveChanges')}
         </Button>
         <Button
           variant="outlined"
@@ -188,11 +190,11 @@ const SystemSettings = () => {
           onClick={() => setResetDialog(true)}
           disabled={!isModified}
         >
-          Reset Changes
+          {t('systemSettings.resetChanges')}
         </Button>
         {isModified && (
           <Chip
-            label="Unsaved Changes"
+            label={t('systemSettings.unsavedChanges')}
             color="warning"
             size="small"
           />
@@ -205,27 +207,27 @@ const SystemSettings = () => {
           <Card>
             <CardHeader
               avatar={<SettingsIcon />}
-              title="Application Settings"
-              subheader="General application configuration"
+              title={t('systemSettings.applicationSettings')}
+              subheader={t('systemSettings.generalApplicationConfiguration')}
             />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <TextField
-                  label="Application Name"
+                  label={t('systemSettings.applicationName')}
                   value={settings.appName}
                   onChange={(e) => handleSettingChange('app', 'appName', e.target.value)}
                   fullWidth
                 />
                 
                 <FormControl fullWidth>
-                  <InputLabel>Default Language</InputLabel>
+                  <InputLabel>{t('systemSettings.defaultLanguage')}</InputLabel>
                   <Select
                     value={settings.defaultLanguage}
                     onChange={(e) => handleSettingChange('app', 'defaultLanguage', e.target.value)}
-                    label="Default Language"
+                    label={t('systemSettings.defaultLanguage')}
                   >
-                    <MenuItem value="en">English</MenuItem>
-                    <MenuItem value="ar">Arabic</MenuItem>
+                    <MenuItem value="en">{t('systemSettings.languages.english')}</MenuItem>
+                    <MenuItem value="ar">{t('systemSettings.languages.arabic')}</MenuItem>
                   </Select>
                 </FormControl>
 
@@ -236,7 +238,7 @@ const SystemSettings = () => {
                       onChange={(e) => handleSettingChange('app', 'enableNotifications', e.target.checked)}
                     />
                   }
-                  label="Enable Notifications"
+                  label={t('systemSettings.enableNotifications')}
                 />
 
                 <FormControlLabel
@@ -246,13 +248,13 @@ const SystemSettings = () => {
                       onChange={(e) => handleSettingChange('app', 'enableAutoSave', e.target.checked)}
                     />
                   }
-                  label="Enable Auto-Save"
+                  label={t('systemSettings.enableAutoSave')}
                 />
 
                 {settings.enableAutoSave && (
                   <Box>
                     <Typography gutterBottom>
-                      Auto-Save Interval: {settings.autoSaveInterval} seconds
+                      {t('systemSettings.autoSaveInterval')}: {settings.autoSaveInterval} {t('systemSettings.seconds')}
                     </Typography>
                     <Slider
                       value={settings.autoSaveInterval}
@@ -275,13 +277,13 @@ const SystemSettings = () => {
           <Card>
             <CardHeader
               avatar={<StorageIcon />}
-              title="Data Management"
-              subheader="Data retention and backup settings"
+              title={t('systemSettings.dataManagement')}
+              subheader={t('systemSettings.dataRetentionAndBackupSettings')}
             />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <TextField
-                  label="Data Retention (Days)"
+                  label={t('systemSettings.dataRetentionDays')}
                   type="number"
                   value={settings.dataRetentionDays}
                   onChange={(e) => handleSettingChange('data', 'dataRetentionDays', parseInt(e.target.value))}
@@ -296,26 +298,26 @@ const SystemSettings = () => {
                       onChange={(e) => handleSettingChange('data', 'enableDataBackup', e.target.checked)}
                     />
                   }
-                  label="Enable Data Backup"
+                  label={t('systemSettings.enableDataBackup')}
                 />
 
                 {settings.enableDataBackup && (
                   <FormControl fullWidth>
-                    <InputLabel>Backup Frequency</InputLabel>
+                    <InputLabel>{t('systemSettings.backupFrequency')}</InputLabel>
                     <Select
                       value={settings.backupFrequency}
                       onChange={(e) => handleSettingChange('data', 'backupFrequency', e.target.value)}
-                      label="Backup Frequency"
+                      label={t('systemSettings.backupFrequency')}
                     >
-                      <MenuItem value="daily">Daily</MenuItem>
-                      <MenuItem value="weekly">Weekly</MenuItem>
-                      <MenuItem value="monthly">Monthly</MenuItem>
+                      <MenuItem value="daily">{t('systemSettings.daily')}</MenuItem>
+                      <MenuItem value="weekly">{t('systemSettings.weekly')}</MenuItem>
+                      <MenuItem value="monthly">{t('systemSettings.monthly')}</MenuItem>
                     </Select>
                   </FormControl>
                 )}
 
                 <TextField
-                  label="Max Leads Per Page"
+                  label={t('systemSettings.maxLeadsPerPage')}
                   type="number"
                   value={settings.maxLeadsPerPage}
                   onChange={(e) => handleSettingChange('data', 'maxLeadsPerPage', parseInt(e.target.value))}
@@ -330,7 +332,7 @@ const SystemSettings = () => {
                       onChange={(e) => handleSettingChange('data', 'enableDataExport', e.target.checked)}
                     />
                   }
-                  label="Enable Data Export"
+                  label={t('systemSettings.enableDataExport')}
                 />
               </Box>
             </CardContent>
@@ -342,8 +344,8 @@ const SystemSettings = () => {
           <Card>
             <CardHeader
               avatar={<SpeedIcon />}
-              title="Performance Settings"
-              subheader="System performance optimization"
+              title={t('systemSettings.performanceSettings')}
+              subheader={t('systemSettings.systemPerformanceOptimization')}
             />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -354,12 +356,12 @@ const SystemSettings = () => {
                       onChange={(e) => handleSettingChange('performance', 'enableCaching', e.target.checked)}
                     />
                   }
-                  label="Enable Caching"
+                  label={t('systemSettings.enableCaching')}
                 />
 
                 {settings.enableCaching && (
                   <TextField
-                    label="Cache Expiration (Hours)"
+                    label={t('systemSettings.cacheExpirationHours')}
                     type="number"
                     value={settings.cacheExpiration}
                     onChange={(e) => handleSettingChange('performance', 'cacheExpiration', parseInt(e.target.value))}
@@ -375,11 +377,11 @@ const SystemSettings = () => {
                       onChange={(e) => handleSettingChange('performance', 'enableLazyLoading', e.target.checked)}
                     />
                   }
-                  label="Enable Lazy Loading"
+                  label={t('systemSettings.enableLazyLoading')}
                 />
 
                 <TextField
-                  label="Max Concurrent Requests"
+                  label={t('systemSettings.maxConcurrentRequests')}
                   type="number"
                   value={settings.maxConcurrentRequests}
                   onChange={(e) => handleSettingChange('performance', 'maxConcurrentRequests', parseInt(e.target.value))}
@@ -394,19 +396,19 @@ const SystemSettings = () => {
 
       {/* Reset Dialog */}
       <Dialog open={resetDialog} onClose={() => setResetDialog(false)}>
-        <DialogTitle>Reset Settings</DialogTitle>
+        <DialogTitle>{t('systemSettings.resetSettings')}</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to reset all changes? This will revert all settings to their last saved state.
+            {t('systemSettings.resetConfirmation')}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setResetDialog(false)}>Cancel</Button>
+          <Button onClick={() => setResetDialog(false)}>{t('systemSettings.cancel')}</Button>
           <Button onClick={handleResetSettings} color="primary">
-            Reset Changes
+            {t('systemSettings.resetChanges')}
           </Button>
           <Button onClick={handleFactoryReset} color="error">
-            Factory Reset
+            {t('systemSettings.factoryReset')}
           </Button>
         </DialogActions>
       </Dialog>

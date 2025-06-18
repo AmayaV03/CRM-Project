@@ -22,11 +22,13 @@ import * as yup from 'yup';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import { useLeads } from "../../hooks/useLeads";
+import { useTranslation } from 'react-i18next';
 
 const LeadForm = ({ lead = null, onSubmit, onCancel }) => {
   const dialogRef = useRef(null);
   const isEdit = lead !== null;
   const { leads, updateLeadData, createLead } = useLeads();
+  const { t } = useTranslation();
 
   // Initialize select values with proper defaults
   const sourceOptions = ['website', 'referral', 'trade-show', 'other'];
@@ -62,8 +64,8 @@ const LeadForm = ({ lead = null, onSubmit, onCancel }) => {
       .min(new Date(), 'Expected close date cannot be in the past'),
     nextFollowupDate: yup.date()
       .nullable()
-      .typeError('Please select a valid date')
-      .min(new Date(), 'Follow-up date cannot be in the past'),
+      .typeError(t('validation.dateInvalid'))
+      .min(new Date(), t('leads.validation.followUpDatePast')),
     notes: yup.string().nullable()
   });
 
@@ -272,7 +274,7 @@ const LeadForm = ({ lead = null, onSubmit, onCancel }) => {
           </Box>
           <TextField
             fullWidth
-            label="Next Follow-up Date"
+            label={t('leads.fields.nextFollowupDate')}
             margin="normal"
             type="date"
             InputLabelProps={{

@@ -110,7 +110,7 @@ const LeadDetails = ({ lead, onEdit, onDelete }) => {
                   </Typography>
                   {lead.lastFollowupDate && (
                     <Typography variant="body2" color="textSecondary">
-                      <strong>Last Follow-up:</strong> {format(new Date(lead.lastFollowupDate), 'MMM d, yyyy')}
+                      <strong>{t('leads.fields.lastFollowup')}:</strong> {format(new Date(lead.lastFollowupDate), 'MMM d, yyyy')}
                     </Typography>
                   )}
                   <Typography variant="body2" color="textSecondary">
@@ -126,14 +126,14 @@ const LeadDetails = ({ lead, onEdit, onDelete }) => {
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   <Chip
-                    label={lead.status}
+                    label={t(`leads.statuses.${lead.status}`)}
                     color={getStatusColor(lead.status)}
                     variant="outlined"
                     sx={{ mb: 1 }}
                   />
                   {lead.nextFollowupDate && (
                     <Chip
-                      label={`Next Follow-up: ${format(new Date(lead.nextFollowupDate), 'MMM d, yyyy')}`}
+                      label={`${t('leads.fields.nextFollowupDate')}: ${format(new Date(lead.nextFollowupDate), 'MMM d, yyyy')}`}
                       color={new Date(lead.nextFollowupDate) < new Date() ? 'error' : 'default'}
                       variant="outlined"
                       sx={{ mb: 1 }}
@@ -154,7 +154,7 @@ const LeadDetails = ({ lead, onEdit, onDelete }) => {
               <ListItem key={index}>
                 <ListItemIcon>
                   <Chip
-                    label={history.status}
+                    label={t(`leads.statuses.${history.status}`)}
                     color={getStatusColor(history.status)}
                     size="small"
                     sx={{ height: 'auto' }}

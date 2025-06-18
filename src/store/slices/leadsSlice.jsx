@@ -177,7 +177,7 @@ const initialState = {
     },
     {
       id: '13',
-      name: 'أوليفيا داس',
+      name: 'Olivia Das',
       email: 'olivia@example.com',
       company: 'Tech Innovations',
       status: 'Follow-up',

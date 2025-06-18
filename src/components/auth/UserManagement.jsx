@@ -39,7 +39,7 @@ const UserManagement = ({ open, onClose }) => {
       setUsers([
         {
           id: 1,
-          name: 'أحمد محمد',
+          name: 'Ahmed Mohammed',
           email: 'ahmed@example.com',
           roles: ['admin'],
           status: 'active',
@@ -47,7 +47,7 @@ const UserManagement = ({ open, onClose }) => {
         },
         {
           id: 2,
-          name: 'سارة أحمد',
+          name: 'Sarah Ahmed',
           email: 'sarah@example.com',
           roles: ['sales_manager'],
           status: 'active',
@@ -55,7 +55,7 @@ const UserManagement = ({ open, onClose }) => {
         },
         {
           id: 3,
-          name: 'محمد علي',
+          name: 'Mohammed Ali',
           email: 'mohammed@example.com',
           roles: ['salesperson'],
           status: 'active',
