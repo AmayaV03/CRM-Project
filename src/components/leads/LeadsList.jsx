@@ -26,6 +26,19 @@ import {
   DialogActions,
   Typography
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  CheckCircle as CheckIcon,
+  Error as ErrorIcon,
+  Info as InfoIcon,
+} from '@mui/icons-material';
+import format from 'date-fns/format';
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
+import { selectAllLeads, selectLeadsLoading, selectLeadsError, selectFilteredLeads } from '../../store/slices/leadsSlice';
+import { translateLeadName } from '../../utils/i18nUtils';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -47,28 +60,18 @@ const StyledDeleteIcon = styled(DeleteIcon)(({ theme }) => ({
 const StyledEditIcon = styled(EditIcon)(({ theme }) => ({
   color: theme.palette.warning.main,
 }));
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  CheckCircle as CheckIcon,
-  Error as ErrorIcon,
-  Info as InfoIcon,
-} from '@mui/icons-material';
-import format from 'date-fns/format';
-import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
-import { selectAllLeads, selectLeadsLoading, selectLeadsError, selectFilteredLeads } from '../../store/slices/leadsSlice';
 
 // Styled components
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:hover': {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
     transform: 'translateY(-2px)',
     transition: 'transform 0.2s ease-in-out',
   },
   '&:last-child td': {
     borderBottom: 0,
   },
+  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.5)' : '#ffffff',
 }));
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -76,23 +79,24 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: '500',
   fontSize: '0.95rem',
   color: theme.palette.text.primary,
-  borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+  borderBottom: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)'}`,
 }));
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[100],
+  backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#ffffff',
   '& .MuiTableCell-root': {
     fontWeight: '600',
     fontSize: '0.95rem',
-    color: theme.palette.text.primary,
-    borderBottom: '2px solid rgba(0, 0, 0, 0.12)',
+    color: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
+    borderBottom: `2px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)'}`,
     padding: theme.spacing(1.5, 2),
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
     textAlign: 'center',
+    backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#ffffff',
   },
   '&:hover': {
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#ffffff',
   },
 }));
 
@@ -103,16 +107,22 @@ const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
   '&:last-child': {
     paddingRight: theme.spacing(3),
   },
+  backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#ffffff',
+  color: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
 }));
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
-  boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.04)',
+  boxShadow: theme.palette.mode === 'dark' 
+    ? '0 10px 20px rgba(0, 0, 0, 0.3), 0 6px 6px rgba(0, 0, 0, 0.2)'
+    : '0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.04)',
   borderRadius: '12px',
   overflow: 'hidden',
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.5)' : '#ffffff',
   transition: 'box-shadow 0.3s ease',
   '&:hover': {
-    boxShadow: '0 15px 30px rgba(0, 0, 0, 0.15), 0 8px 8px rgba(0, 0, 0, 0.06)',
+    boxShadow: theme.palette.mode === 'dark'
+      ? '0 15px 30px rgba(0, 0, 0, 0.4), 0 8px 8px rgba(0, 0, 0, 0.3)'
+      : '0 15px 30px rgba(0, 0, 0, 0.15), 0 8px 8px rgba(0, 0, 0, 0.06)',
   },
 }));
 
@@ -194,6 +204,7 @@ const GridItem = styled(Grid)(({ theme }) => ({
 }));
 
 const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
+  const { t } = useTranslation();
   const leads = useSelector(createSelector(
     [selectAllLeads],
     (leads) => leads
@@ -362,7 +373,7 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
             setOpenForm(true);
           }}
         >
-          Add Lead
+          {t('leads.addNew')}
         </Button>
       </Box>
 
@@ -380,51 +391,55 @@ const LeadsList = ({ createLead, updateLeadData, deleteLead, fetchLeads }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <StyledTableHeaderCell>Name</StyledTableHeaderCell>
-                  <StyledTableHeaderCell>Email</StyledTableHeaderCell>
-                  <StyledTableHeaderCell>Company</StyledTableHeaderCell>
-                  <StyledTableHeaderCell>Status</StyledTableHeaderCell>
-                  <StyledTableHeaderCell>Source</StyledTableHeaderCell>
-                  <StyledTableHeaderCell>Assigned To</StyledTableHeaderCell>
-                  <StyledTableHeaderCell>Next Follow-up</StyledTableHeaderCell>
-                  <StyledTableHeaderCell>Actions</StyledTableHeaderCell>
+                  <StyledTableHeaderCell>{t('leads.table.name')}</StyledTableHeaderCell>
+                  <StyledTableHeaderCell>{t('leads.table.email')}</StyledTableHeaderCell>
+                  <StyledTableHeaderCell>{t('leads.table.phone')}</StyledTableHeaderCell>
+                  <StyledTableHeaderCell>{t('leads.table.source')}</StyledTableHeaderCell>
+                  <StyledTableHeaderCell>{t('leads.table.status')}</StyledTableHeaderCell>
+                  <StyledTableHeaderCell>{t('leads.table.owner')}</StyledTableHeaderCell>
+                  <StyledTableHeaderCell>{t('leads.table.actions')}</StyledTableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {getFilteredLeads(leads, filter).map((lead, index) => (
                   <StyledTableRow key={lead.id.toString() + '-' + Date.now()}>
-                    <StyledTableCell>{lead.name}</StyledTableCell>
+                    <StyledTableCell>{translateLeadName(lead.name, t)}</StyledTableCell>
                     <StyledTableCell>{lead.email}</StyledTableCell>
-                    <StyledTableCell>{lead.company}</StyledTableCell>
+                    <StyledTableCell>{lead.phone}</StyledTableCell>
                     <StyledTableCell>
                       <Chip
-                        label={lead.status}
-                        color={lead.status === 'Won' ? 'success' : lead.status === 'Lost' ? 'error' : 'primary'}
-                        size="small"
-                      />
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Chip
-                        label={lead.source}
+                        label={t(`leads.sources.${lead.source}`)}
                         color="info"
                         size="small"
                       />
                     </StyledTableCell>
-                    <StyledTableCell>{lead.assignedTo}</StyledTableCell>
                     <StyledTableCell>
-                      {lead.nextFollowupDate ? format(new Date(lead.nextFollowupDate), 'MMM d, yyyy') : 'Not set'}
+                      <Chip
+                        label={t(`leads.statuses.${lead.status}`)}
+                        color={getStatusColor(lead.status)}
+                        size="small"
+                      />
                     </StyledTableCell>
+                    <StyledTableCell>{lead.owner}</StyledTableCell>
                     <StyledTableCell>
-                      <StyledIconButton onClick={() => handleEdit(lead)}>
-                        <StyledEditIcon />
-                      </StyledIconButton>
-                      {deletingLeadId === lead.id ? (
-                        <CircularProgress size={24} />
-                      ) : (
-                        <StyledIconButton onClick={() => handleDelete(lead.id)}>
-                          <StyledDeleteIcon />
+                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                        <StyledIconButton
+                          onClick={() => handleEdit(lead)}
+                          title={t('leads.actions.edit')}
+                        >
+                          <StyledEditIcon />
                         </StyledIconButton>
-                      )}
+                        {deletingLeadId === lead.id ? (
+                          <CircularProgress size={24} />
+                        ) : (
+                          <StyledIconButton
+                            onClick={() => handleDelete(lead.id)}
+                            title={t('leads.actions.delete')}
+                          >
+                            <StyledDeleteIcon />
+                          </StyledIconButton>
+                        )}
+                      </Box>
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}

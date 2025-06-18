@@ -47,6 +47,10 @@ export default {
     import: 'استيراد',
     backup: 'نسخ احتياطي',
     restore: 'استعادة',
+    unknown: 'غير معروف',
+    noCompany: 'لا توجد شركة',
+    notSet: 'غير محدد',
+    unassigned: 'غير معين',
   },
 
   // Dashboard
@@ -121,30 +125,39 @@ export default {
       assignConfirm: 'هل أنت متأكد من رغبتك في إعادة تعيين هذا العميل المحتمل؟',
     },
     statuses: {
-      open: 'مفتوح',
-      contacted: 'تم الاتصال',
-      qualified: 'مؤهل',
-      proposal: 'عرض',
-      negotiation: 'تفاوض',
-      'closed-won': 'مغلق - فوز',
-      'closed-lost': 'مغلق - خسارة',
-      cold: 'بارد',
+      'New': 'جديد',
+      'Contacted': 'تم الاتصال',
+      'Follow-up': 'متابعة',
+      'Won': 'فوز',
+      'Lost': 'خسارة',
+      'Cold': 'بارد'
     },
     sources: {
-      website: 'موقع ويب',
-      referral: 'إحالة',
-      'social-media': 'وسائل التواصل الاجتماعي',
-      'email-campaign': 'حملة بريد إلكتروني',
-      'phone-call': 'مكالمة هاتفية',
-      'trade-show': 'معرض تجاري',
-      advertisement: 'إعلان',
-      other: 'أخرى',
+      'Website': 'موقع ويب',
+      'Referral': 'إحالة',
+      'Email Campaign': 'حملة بريد إلكتروني',
+      'Social Media': 'وسائل التواصل الاجتماعي',
+      'Phone Call': 'مكالمة هاتفية',
+      'Trade Show': 'معرض تجاري',
+      'LinkedIn': 'لينكد إن',
+      'Advertisement': 'إعلان',
+      'Other': 'أخرى'
+    },
+    table: {
+      name: 'الاسم',
+      email: 'البريد الإلكتروني',
+      phone: 'الهاتف',
+      source: 'المصدر',
+      status: 'الحالة',
+      owner: 'المالك',
+      actions: 'الإجراءات'
     },
   },
 
   // Kanban Board
   kanban: {
     title: 'لوحة كانبان',
+    subtitle: 'تصور وإدارة عملائك المحتملين ببساطة السحب والإفلات',
     dragToMove: 'اسحب العملاء المحتملين لتغيير الحالة',
     noLeads: 'لا توجد عملاء محتملين في هذا العمود',
     leadCount: '{count} عملاء محتملين',
@@ -155,6 +168,30 @@ export default {
       settings: 'إعدادات العمود',
       hide: 'إخفاء العمود',
     },
+    columns: {
+      new: 'جديد',
+      contacted: 'تم الاتصال',
+      inProgress: 'قيد التقدم',
+      converted: 'فوز',
+      lost: 'خسارة',
+    },
+    statuses: {
+      new: 'جديد',
+      contacted: 'تم الاتصال',
+      inProgress: 'قيد التقدم',
+      converted: 'تم التحويل',
+      won: 'فوز',
+      lost: 'خسارة',
+    },
+    messages: {
+      noLeadsInColumn: 'لا توجد عملاء محتملين {status}',
+      lead: 'عميل محتمل',
+      leads: 'عملاء محتملين',
+    },
+    dealSize: 'حجم الصفقة',
+    winProbability: 'احتمالية الفوز',
+    expectedClose: 'التاريخ المتوقع للإغلاق',
+    followUp: 'متابعة',
   },
 
   // Reports
@@ -164,6 +201,7 @@ export default {
     performance: 'الأداء',
     sources: 'مصادر العملاء المحتملين',
     conversion: 'قمع التحويل',
+    noData: 'لا توجد بيانات متاحة',
     filters: {
       dateRange: 'نطاق التاريخ',
       owner: 'مسؤول العميل المحتمل',
@@ -409,7 +447,26 @@ export default {
 
   admin: {
     title: 'لوحة الإدارة',
+    dashboard: 'لوحة تحكم المسؤول',
     subtitle: 'إدارة المستخدمين وإعدادات النظام ومراقبة نشاطات المنصة',
+    userStatisticsOverview: 'نظرة عامة على إحصائيات المستخدمين',
+    quickActions: 'إجراءات سريعة',
+    userRoles: {
+      adminUsers: 'المستخدمون المسؤولون',
+      salesManagers: 'مديرو المبيعات',
+      salesReps: 'مندوبو المبيعات'
+    },
+    totalUsers: 'إجمالي المستخدمين',
+    quickActionCards: {
+      userManagement: 'إدارة المستخدمين',
+      systemSettings: 'إعدادات النظام',
+      securitySettings: 'إعدادات الأمان'
+    },
+    buttons: {
+      manageUsers: 'إدارة المستخدمين',
+      configure: 'تكوين',
+      security: 'الأمان'
+    },
     tabs: {
       overview: 'نظرة عامة',
       users: 'إدارة المستخدمين',
@@ -418,14 +475,65 @@ export default {
     },
     metrics: {
       totalUsers: 'إجمالي المستخدمين',
-      adminUsers: 'المستخدمون المسؤولون',
-      salesManagers: 'مديرو المبيعات',
-      salesReps: 'مندوبو المبيعات',
-      activeUsers: 'المستخدمون النشطون في النظام',
       adminAccounts: 'حسابات المسؤولين',
       salesManagement: 'أدوار إدارة المبيعات',
       salesRepresentatives: 'مندوبو المبيعات'
     },
     accessDenied: 'تم رفض الوصول: ليس لديك صلاحية للوصول إلى لوحة تحكم المسؤول.'
+  },
+
+  // Data translations (for company names, lead names, etc.)
+  data: {
+    companies: {
+      'Tech Innovations': 'Tech Innovations',
+      'TechCorp Solutions': 'TechCorp Solutions',
+      'Digital Dynamics': 'Digital Dynamics',
+      'Innovation Labs': 'Innovation Labs',
+      'Future Systems': 'Future Systems',
+      'StartupCorp': 'StartupCorp',
+      'شركة المثال': 'Example Company',
+      'حلول التقنية': 'Technology Solutions',
+      'حلول رقمية': 'Digital Solutions',
+      'تقنيات الابتكار': 'Innovation Technologies',
+      'الابتكارات التقنية': 'Technical Innovations',
+      'مشاريع التقنية': 'Technology Projects',
+      'Innovate Tech': 'Innovate Tech',
+      'Digital Solutions': 'Digital Solutions',
+      'Tech Solutions': 'Tech Solutions',
+      'Tech Ventures': 'Tech Ventures',
+      'Example Corp': 'Example Corp',
+      'Example Company': 'Example Company',
+      'Technology Solutions': 'Technology Solutions',
+      'Digital Solutions': 'Digital Solutions',
+      'Innovation Technologies': 'Innovation Technologies',
+      'Technical Innovations': 'Technical Innovations',
+      'Technology Projects': 'Technology Projects',
+    },
+    leadNames: {
+      'John Smith': 'John Smith',
+      'Sarah Johnson': 'Sarah Johnson',
+      'Michael Brown': 'Michael Brown',
+      'Emily Davis': 'Emily Davis',
+      'David Wilson': 'David Wilson',
+      'Lisa Anderson': 'Lisa Anderson',
+      'Robert Taylor': 'Robert Taylor',
+      'Jennifer Martinez': 'Jennifer Martinez',
+      'Olivia Das': 'أوليفيا داس',
+      'Michael Chen': 'محمد علي',
+      'Robert William': 'أحمد علي',
+      'أحمد محمد': 'Ahmed Mohammed',
+      'سارة أحمد': 'Sarah Ahmed',
+      'محمد علي': 'Mohammed Ali',
+      'نورا محمد': 'Noura Mohammed',
+      'عمر خالد': 'Omar Khalid',
+      'كريم أحمد': 'Kareem Ahmed',
+      'ليلى محمد': 'Layla Mohammed',
+      'حسين وليام': 'Hussein William',
+      'مايكل تشين': 'Michael Chen',
+      'علي أحمد': 'Ali Ahmed',
+      'فاطمة محمد': 'Fatima Mohammed',
+      'روبرت وليام': 'Robert William',
+      'Ahmed Ali': 'Ahmed Ali',
+    },
   },
 }; 

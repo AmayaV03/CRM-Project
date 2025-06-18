@@ -1,9 +1,12 @@
 import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 import { Droppable } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 import KanbanCard from './KanbanCard';
 
 const KanbanColumn = ({ column, leads, onLeadClick, hideHeader = false }) => {
+  const { t } = useTranslation();
+  
   // If hideHeader is true, return just the cards without any container
   if (hideHeader) {
     return (
@@ -44,7 +47,7 @@ const KanbanColumn = ({ column, leads, onLeadClick, hideHeader = false }) => {
             {column.title}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {leads.length} {leads.length === 1 ? 'lead' : 'leads'}
+            {leads.length} {leads.length === 1 ? t('kanban.messages.lead') : t('kanban.messages.leads')}
           </Typography>
         </Box>
         <Droppable droppableId={column.id}>

@@ -86,28 +86,28 @@ const AdminDashboard = () => {
   // Static admin metrics
   const adminMetrics = [
     {
-      title: 'Total Users',
+      title: t('admin.totalUsers'),
       value: userCounts.total.toString(),
       icon: <PeopleIcon />,
       color: 'primary',
       description: 'Active system users',
     },
     {
-      title: 'Admin Users',
+      title: t('admin.userRoles.adminUsers'),
       value: userCounts.admin.toString(),
       icon: <SupervisorIcon />,
       color: 'error',
       description: 'Administrator accounts',
     },
     {
-      title: 'Sales Managers',
+      title: t('admin.userRoles.salesManagers'),
       value: userCounts.salesManager.toString(),
       icon: <SettingsIcon />,
       color: 'warning',
       description: 'Sales management roles',
     },
     {
-      title: 'Sales Reps',
+      title: t('admin.userRoles.salesReps'),
       value: userCounts.salesperson.toString(),
       icon: <PersonAddIcon />,
       color: 'info',
@@ -134,10 +134,10 @@ const AdminDashboard = () => {
       {/* Header */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Admin Dashboard
+          {t('admin.dashboard')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Manage users, system settings, and monitor platform activities
+          {t('admin.subtitle')}
         </Typography>
       </Box>
 
@@ -164,7 +164,7 @@ const AdminDashboard = () => {
           {/* Overview Header */}
           <Box sx={{ mb: 3 }}>
             <Typography variant="h5" component="h2" gutterBottom>
-              User Statistics Overview
+              {t('admin.userStatisticsOverview')}
             </Typography>
           </Box>
 
@@ -222,7 +222,7 @@ const AdminDashboard = () => {
 
           {/* Quick Actions */}
           <Typography variant="h5" component="h2" gutterBottom>
-            Quick Actions
+            {t('admin.quickActions')}
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={4}>
@@ -232,7 +232,7 @@ const AdminDashboard = () => {
                     <Avatar sx={{ bgcolor: 'primary.main' }}>
                       <PeopleIcon />
                     </Avatar>
-                    <Typography variant="h6">User Management</Typography>
+                    <Typography variant="h6">{t('admin.quickActionCards.userManagement')}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     Add, edit, or remove users from the system. Manage roles and permissions.
@@ -244,7 +244,7 @@ const AdminDashboard = () => {
                     onClick={() => setSelectedTab(1)}
                     variant="contained"
                   >
-                    Manage Users
+                    {t('admin.buttons.manageUsers')}
                   </Button>
                 </CardActions>
               </Card>
@@ -257,7 +257,7 @@ const AdminDashboard = () => {
                     <Avatar sx={{ bgcolor: 'warning.main' }}>
                       <SettingsIcon />
                     </Avatar>
-                    <Typography variant="h6">System Settings</Typography>
+                    <Typography variant="h6">{t('admin.quickActionCards.systemSettings')}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     Configure system-wide settings, preferences, and application behavior.
@@ -269,7 +269,7 @@ const AdminDashboard = () => {
                     onClick={() => setSelectedTab(2)}
                     variant="outlined"
                   >
-                    Configure
+                    {t('admin.buttons.configure')}
                   </Button>
                 </CardActions>
               </Card>
@@ -282,7 +282,7 @@ const AdminDashboard = () => {
                     <Avatar sx={{ bgcolor: 'error.main' }}>
                       <SecurityIcon />
                     </Avatar>
-                    <Typography variant="h6">Security Settings</Typography>
+                    <Typography variant="h6">{t('admin.quickActionCards.securitySettings')}</Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     Manage security policies, authentication settings, and access controls.
@@ -294,7 +294,7 @@ const AdminDashboard = () => {
                     onClick={() => setSelectedTab(3)}
                     variant="outlined"
                   >
-                    Security
+                    {t('admin.buttons.security')}
                   </Button>
                 </CardActions>
               </Card>

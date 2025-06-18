@@ -7,11 +7,11 @@ import { useLeads } from '../../hooks/useLeads';
 
 // Define the columns for the Kanban board
 const COLUMNS = [
-  { id: 'new', title: 'New' },
-  { id: 'contacted', title: 'Contacted' },
-  { id: 'in_progress', title: 'In Progress' },
-  { id: 'converted', title: 'Won' },
-  { id: 'lost', title: 'Lost' },
+  { id: 'new', titleKey: 'kanban.columns.new' },
+  { id: 'contacted', titleKey: 'kanban.columns.contacted' },
+  { id: 'in_progress', titleKey: 'kanban.columns.inProgress' },
+  { id: 'converted', titleKey: 'kanban.columns.converted' },
+  { id: 'lost', titleKey: 'kanban.columns.lost' },
 ];
 
 // Map status to column ID (normalize statuses to handle variations)
@@ -136,7 +136,7 @@ const KanbanBoard = () => {
   if (error) {
     return (
       <Box sx={{ p: 3 }}>
-        <Alert severity="error">Error loading leads: {error}</Alert>
+        <Alert severity="error">{t('errors.generic')}: {error}</Alert>
       </Box>
     );
   }
@@ -189,10 +189,10 @@ const KanbanBoard = () => {
                   }}
                 >
                   <Typography variant="h6" fontWeight="bold" mt={8} color='#FF6B35' >
-                    {column.title}
+                    {t(column.titleKey)}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {columnLeads.length} {columnLeads.length === 1 ? 'lead' : 'leads'}
+                    {columnLeads.length} {columnLeads.length === 1 ? t('kanban.messages.lead') : t('kanban.messages.leads')}
                   </Typography>
                 </Box>
                 
@@ -264,7 +264,7 @@ const KanbanBoard = () => {
                         fontStyle: 'italic',
                       }}
                     >
-                      No {column.title.toLowerCase()} leads
+                      {t('kanban.messages.noLeadsInColumn', { status: t(column.titleKey).toLowerCase() })}
                     </Box>
                   )}
                 </Box>

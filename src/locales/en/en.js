@@ -47,6 +47,10 @@ export default {
     import: 'Import',
     backup: 'Backup',
     restore: 'Restore',
+    unknown: 'Unknown',
+    noCompany: 'No company',
+    notSet: 'Not set',
+    unassigned: 'Unassigned',
   },
 
   // Dashboard
@@ -145,6 +149,7 @@ export default {
   // Kanban Board
   kanban: {
     title: 'Kanban Board',
+    subtitle: 'Visualize and manage your leads with drag-and-drop simplicity',
     dragToMove: 'Drag leads to change status',
     noLeads: 'No leads in this column',
     leadCount: '{count} leads',
@@ -155,6 +160,30 @@ export default {
       settings: 'Column Settings',
       hide: 'Hide Column',
     },
+    columns: {
+      new: 'New',
+      contacted: 'Contacted',
+      inProgress: 'In Progress',
+      converted: 'Won',
+      lost: 'Lost',
+    },
+    statuses: {
+      new: 'New',
+      contacted: 'Contacted',
+      inProgress: 'In Progress',
+      converted: 'Converted',
+      won: 'Won',
+      lost: 'Lost',
+    },
+    messages: {
+      noLeadsInColumn: 'No {status} leads',
+      lead: 'lead',
+      leads: 'leads',
+    },
+    dealSize: 'Deal Size',
+    winProbability: 'Win Probability',
+    expectedClose: 'Expected Close',
+    followUp: 'Follow-up',
   },
 
   // Reports
@@ -164,6 +193,7 @@ export default {
     performance: 'Performance',
     sources: 'Lead Sources',
     conversion: 'Conversion Funnel',
+    noData: 'No data available',
     filters: {
       dateRange: 'Date Range',
       owner: 'Lead Owner',
@@ -380,11 +410,85 @@ export default {
   // Admin
   admin: {
     title: 'Admin Panel',
+    dashboard: 'Admin Dashboard',
+    subtitle: 'Manage users, system settings, and monitor platform activities',
+    userStatisticsOverview: 'User Statistics Overview',
+    quickActions: 'Quick Actions',
+    userRoles: {
+      adminUsers: 'Admin Users',
+      salesManagers: 'Sales Managers',
+      salesReps: 'Sales Reps'
+    },
+    totalUsers: 'Total Users',
+    quickActionCards: {
+      userManagement: 'User Management',
+      systemSettings: 'System Settings',
+      securitySettings: 'Security Settings'
+    },
+    buttons: {
+      manageUsers: 'Manage Users',
+      configure: 'Configure',
+      security: 'Security'
+    },
     tabs: {
       overview: 'Overview',
       users: 'User Management',
       system: 'System Settings',
       security: 'Security'
     }
+  },
+
+  // Data translations (for company names, lead names, etc.)
+  data: {
+    companies: {
+      'Tech Innovations': 'Tech Innovations',
+      'TechCorp Solutions': 'TechCorp Solutions',
+      'Digital Dynamics': 'Digital Dynamics',
+      'Innovation Labs': 'Innovation Labs',
+      'Future Systems': 'Future Systems',
+      'StartupCorp': 'StartupCorp',
+      'شركة المثال': 'Example Company',
+      'حلول التقنية': 'Technology Solutions',
+      'حلول رقمية': 'Digital Solutions',
+      'تقنيات الابتكار': 'Innovation Technologies',
+      'الابتكارات التقنية': 'Technical Innovations',
+      'مشاريع التقنية': 'Technology Projects',
+      'Innovate Tech': 'Innovate Tech',
+      'Digital Solutions': 'Digital Solutions',
+      'Tech Solutions': 'Tech Solutions',
+      'Tech Ventures': 'Tech Ventures',
+      'Example Corp': 'Example Corp',
+      'Example Company': 'Example Company',
+      'Technology Solutions': 'Technology Solutions',
+      'Innovation Technologies': 'Innovation Technologies',
+      'Technical Innovations': 'Technical Innovations',
+      'Technology Projects': 'Technology Projects',
+    },
+    leadNames: {
+      'John Smith': 'John Smith',
+      'Sarah Johnson': 'Sarah Johnson',
+      'Michael Brown': 'Michael Brown',
+      'Emily Davis': 'Emily Davis',
+      'David Wilson': 'David Wilson',
+      'Lisa Anderson': 'Lisa Anderson',
+      'Robert Taylor': 'Robert Taylor',
+      'Jennifer Martinez': 'Jennifer Martinez',
+      'Olivia Das': 'أوليفيا داس',
+      'Michael Chen': 'محمد علي',
+      'Robert William': 'أحمد علي',
+      'أحمد محمد': 'Ahmed Mohammed',
+      'سارة أحمد': 'Sarah Ahmed',
+      'محمد علي': 'Mohammed Ali',
+      'نورا محمد': 'Noura Mohammed',
+      'عمر خالد': 'Omar Khalid',
+      'كريم أحمد': 'Kareem Ahmed',
+      'ليلى محمد': 'Layla Mohammed',
+      'حسين وليام': 'Hussein William',
+      'مايكل تشين': 'Michael Chen',
+      'علي أحمد': 'Ali Ahmed',
+      'فاطمة محمد': 'Fatima Mohammed',
+      'روبرت وليام': 'Robert William',
+      'Ahmed Ali': 'Ahmed Ali',
+    },
   },
 }; 

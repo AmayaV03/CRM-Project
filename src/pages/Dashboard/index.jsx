@@ -77,7 +77,7 @@ const Dashboard = () => {
           {t('dashboard.title')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Monitor your sales performance and track your progress
+          {t('dashboard.welcome.subtitle')}
         </Typography>
       </Box>
       
